@@ -1,0 +1,55 @@
+Email notification#
+JSON2Video API allows you to configure email notifications to be sent upon completion of video rendering. This is particularly useful for automated workflows, informing users when their videos are ready or triggering downstream processes.
+
+Configuration#
+Email notifications are configured using the exports property within the movie object. You can define an email destination within the destinations array.
+
+{
+    "resolution": "full-hd",
+    "quality": "high",
+    "scenes": [],
+    "exports": [{
+        "destinations": [{
+            "type": "email",
+            "to": "your-email@example.com",
+            "subject": "Your video is ready!",
+            "message": "Your video is now available at __video_url__"
+        }]
+    }]
+}
+Copy
+Properties#
+The email destination object has the following properties:
+
+type: (Required) Set to "email".
+to: (Required) The recipient's email address.
+subject: (Required) The subject line of the email.
+message: (Required) The body of the email message. Supports macros for dynamic content.
+Macros#
+You can use macros within the subject and message properties to include dynamic information about the rendered video.
+
+__yyyy__: the year number (example: 2023)
+__mm__: the month number (example: 12)
+__dd__: the day number (example: 25)
+__hh__: the hour number (example: 12)
+__nn__: the minute number (example: 30)
+__ss__: the second number (example: 00)
+__random__: a random number (example: 31648)
+__filename__: the original file name created by the API (example: 2023-03-25-38267.mp4)
+__filename_without_extension__: the original file name without extension (example: 2023-03-25-38267)
+__filename_extension__: the original file name without extension (example: mp4)
+__video_url__: The URL of the rendered video.
+Example using Macros#
+{
+    "resolution": "full-hd",
+    "quality": "high",
+    "scenes": [],
+    "exports": [{
+        "destinations": [{
+            "type": "email",
+            "to": "your-email@example.com",
+            "subject": "New video: __filename__",
+            "message": "The video '__filename__' is ready. Download it from: __video_url__"
+        }]
+    }]
+}

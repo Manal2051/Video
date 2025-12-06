@@ -1,0 +1,20 @@
+Getting your API key#
+To use the JSON2Video API, you'll need an API key. This key is used to authenticate your requests and authorize access to the API.
+
+There are two types of API keys:
+
+Primary API key: This key is automatically generated when you sign up for a JSON2Video account. It has full administrative access to your account, allowing you to perform all available operations.
+Secondary API keys: These keys can be created from the API Keys page in the dashboard (available for paid plans only). They offer more granular control over permissions.
+Creating Secondary API Keys#
+Paid plan users can create secondary API keys with different permission roles:
+
+Render: Allows the API key to be used for creating videos using the /movies endpoint.
+Editor: Includes Render permissions and also grants the ability to create and edit templates.
+Manager: Encompasses Editor permissions and further allows the creation and modification of connections.
+Security Recommendations#
+Your API key is sensitive information and should be treated with care. Follow these recommendations to ensure the security of your account:
+
+Keep your API key secret: Never share your API key with anyone.
+Don't share your API key: Avoid storing your API key in public repositories or other insecure locations.
+Regenerate your API key if it's compromised: If you suspect that your API key has been compromised, immediately regenerate it from the dashboard. This will invalidate the old key and prevent unauthorized access.
+API keys should not be used in client-side code: Exposing your API key in client-side code (e.g., JavaScript in a web browser) makes it vulnerable to unauthorized use. Always perform API calls from a secure server-side environment.

@@ -1,0 +1,145 @@
+Movies#
+The Movies endpoint allows you to create new video rendering jobs and check the status of existing ones. This is the primary endpoint for interacting with the JSON2Video API.
+
+Base URL: https://api.json2video.com/v2/movies
+
+POST /movies - Create a new movie#
+This endpoint initiates a new video rendering job based on the provided JSON payload.
+
+Request:
+
+Method: POST
+Headers:
+x-api-key: Your API key for authentication.
+Content-Type: application/json
+Body: A JSON object conforming to the Movie JSON Schema. This JSON defines the structure and content of the video to be rendered.
+Example Request (cURL):
+
+curl --location --request POST 'https://api.json2video.com/v2/movies' \
+--header 'x-api-key: YOUR_API_KEY' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "scenes": [
+        {
+            "elements": [
+                {
+                    "type": "video",
+                    "src": "https://example.com/path/to/my/video.mp4"
+                }
+            ]
+        }
+    ]
+}'
+Copy
+Response:
+
+A successful request returns a JSON object with details about the initiated job.
+
+Status Code: 200
+Body:
+{
+    "success": true,
+    "project": "YOUR_PROJECT_ID",
+    "timestamp": "2022-08-01T10:49:52.924Z"
+}
+Copy
+success: Indicates if the job was successfully initiated (true or false).
+project: A unique identifier (YOUR_PROJECT_ID) assigned to the rendering job. This ID is used to check the status of the job.
+timestamp: The date and time the job was initiated.
+GET /movies - Check the status of a movie#
+This endpoint retrieves the status of a specific video rendering job using the project ID.
+
+Request:
+
+Method: GET
+Headers:
+x-api-key: Your API key for authentication.
+Query Parameters:
+project: The project ID of the movie rendering job you want to check.
+Example Request (cURL):
+
+curl --location --request GET 'https://api.json2video.com/v2/movies?project=YOUR_PROJECT_ID' \
+--header 'x-api-key: YOUR_API_KEY'
+Copy
+Response:
+
+A successful request returns a JSON object with details about the movie status.
+
+Status Code: 200
+Body (Success):
+{
+  "success": true,
+  "movie": {
+    "success": true,
+    "status": "done",
+    "message": "",
+    "project": "[[YOUR_PROJECT_ID]]",
+    "url": "https://assets.json2video.com/clients/xxxxxxxx/renders/2023-03-06-36066.mp4",
+    "ass": "https://assets.json2video.com/clients/xxxxxxxx/renders/2023-03-06-36066.ass",
+    "created_at": "2023-03-06T07:41:41.946Z",
+    "ended_at": "2023-03-06T07:44:57.108Z",
+    "duration": 108.2,
+    "size": 6876189,
+    "width": 1080,
+    "height": 1920,
+    "rendering_time": 195
+  },
+  "remaining_quota": {
+    "time": 1807
+  }
+}
+Copy
+success: Indicates if the request was successful.
+movie: An object containing details about the movie:
+success: Indicates if the movie rendering was successful.
+status: The current status of the movie rendering job (e.g., "done", "pending", "error").
+message: An error message, if any.
+url: The URL where the rendered video can be downloaded. This field is only present if the status is "done".
+ass: The URL where the generated subtitles can be downloaded. This field is only present if the status is "done".
+created_at: The date and time the job was initiated.
+ended_at: The date and time the job completed.
+duration: The duration of the rendered video in seconds.
+size: The size of the rendered video file in bytes.
+width: The width of the rendered video in pixels.
+height: The height of the rendered video in pixels.
+remaining_quota: An object containing information about your account's remaining quota:
+time: The number of credits remaining in your account.
+A non successful request returns a JSON object with details about the movie status.
+
+Status Code: 200
+Body (Error):
+{
+  "success": true,
+  "movie": {
+    "success": false,
+    "status": "error",
+    "message": "Error: Scene #1 Element #2: The element type 'video' requires a 'src' property.",
+    "project": "JkGxEoPRF9EgRb32",
+    "url": null,
+    "ass": false,
+    "created_at": "2023-03-05T09:42:27.244Z",
+    "ended_at": null,
+    "rendering_time": null
+  },
+  "remaining_quota": {
+    "time": 1807
+  }
+}
+Copy
+This indicates an error occurred (e.g., the project ID was invalid).
+
+success: Indicates if the request was successful.
+movie: An object containing details about the movie:
+success: Indicates if the movie rendering was successful. In case of error, this will be false.
+status: The current status of the movie rendering job ("error").
+message: An error message, if any.
+project: The project ID of the movie rendering job.
+remaining_quota: An object containing information about your account's remaining quota:
+time: The number of credits remaining in your account.
+Possible status values:
+
+pending: The job is queued and waiting to be processed.
+running: The video is currently being rendered.
+done: The video has been successfully rendered and is available for download.
+error: An error occurred during the rendering process. Check the message field for details.
+The message field provides more detailed information about the current status of the movie rendering job.

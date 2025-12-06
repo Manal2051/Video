@@ -1,0 +1,113 @@
+Positioning#
+JSON2Video provides flexible options for positioning elements within your video scenes. You can use predefined positions for quick placement or define custom coordinates for precise control.
+
+Positioning elements#
+Elements can be positioned using the position property or with the x and y properties if position is set to custom.
+
+Predefined Positions#
+The position property allows you to quickly place an element in common locations. The position property intentionally leaves a 5% gap between the element and the edge of the movie canvas.
+
+It accepts the following values:
+
+top-left: Places the element in the top-left corner.
+top-right: Places the element in the top-right corner.
+bottom-right: Places the element in the bottom-right corner.
+bottom-left: Places the element in the bottom-left corner.
+center-center: Places the element in the center of the scene, both horizontally and vertically.
+custom: Places the element at the coordinates specified in the x and y properties.
+Example:
+
+{
+  "type": "image",
+  "src": "https://example.com/image.png",
+  "position": "top-right"
+}
+Copy
+Custom Coordinates#
+For more precise placement, set the position property to custom. This enables the use of the x and y properties.
+
+x: The horizontal position of the element in pixels, relative to the left edge of the movie canvas. A value of 0 places the element at the left edge.
+y: The vertical position of the element in pixels, relative to the top edge of the movie canvas. A value of 0 places the element at the top edge.
+Example:
+
+{
+  "type": "text",
+  "text": "Custom Position",
+  "position": "custom",
+  "x": 100,
+  "y": 50
+}
+Copy
+Positioning the Text and Component elements#
+The Text and Component elements behave exactly the same described above but have some additional properties to control the textbox alignment.
+
+It consists of two main concepts:
+
+Element Canvas Area:
+
+This is the outer area that can occupy the full size of the video canvas. It serves as the boundary within which the text box is placed. The canvas can be adjusted to fit the full video size or a custom size with the position, x, y, width and height properties as described above.
+Textbox Inside the Canvas:
+
+Within the text element canvas, there is a textbox that can be aligned both vertically and horizontally. This alignment feature ensures that regardless of the text length, the textbox can be positioned accurately within the canvas. You can control the alignment of the textbox with the vertical-position and horizontal-position properties inside the settings object.
+Note: Not all component elements have a textbox and this does not apply to them.
+
+Therefore, the final position of the textbox relative to the video canvas is determined by the combination of:
+
+The size and position of the element canvas.
+The alignment settings of the textbox within the canvas.
+This approach is particularly useful for dynamically positioning the textbox. Even if the textbox expands or contracts due to varying text lengths, it will maintain its alignment within the canvas. This ensures a consistent and visually appealing presentation of text in your video, regardless of content changes.
+
+Example: Positioning a Text element relative to the video canvas
+
+{
+  "resolution": "full-hd",
+  "scenes": [
+    {
+      "duration": 10,
+      "elements": [
+        {
+          "type": "text",
+          "text": "Hello World",
+          "settings": {
+            "vertical-position": "bottom",
+            "horizontal-position": "left"
+          }
+        }
+      ]
+    }
+  ]
+}
+Copy
+In this example, the text element is positioned at the bottom-left corner of the video canvas:
+
+The position value is custom by default, the x and y values are 0 by default and the width and height values are -1 by default. This means that by default, the text element canvas occupies the full size of the video canvas.
+The textbox is then aligned to the bottom and left edges of the canvas using the vertical-position and horizontal-position properties inside the settings object.
+Example: Positioning a Text element precisely within the video canvas
+
+{
+  "resolution": "full-hd",
+  "scenes": [
+    {
+      "duration": 10,
+      "elements": [
+        {
+          "type": "text",
+          "text": "Hello World",
+          "position": "custom",
+          "x": 200,
+          "y": 100,
+          "settings": {
+            "vertical-position": "top",
+            "horizontal-position": "left"
+          }
+        }
+      ]
+    }
+  ]
+}
+Copy
+In this example, the text element is positioned at the 200, 100 coordinates:
+
+The position value is custom to allow x and y values to be used.
+The element canvas is moved to the 200, 100 coordinates with the x and y values.
+The textbox is then aligned to the top and left edges of the element canvas using the vertical-position and horizontal-position.

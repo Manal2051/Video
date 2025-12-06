@@ -1,0 +1,53 @@
+Scene object#
+Type: object
+
+Defines a scene within the movie, representing a distinct segment of video content. Each scene can contain multiple elements like videos, images, and text. The order of scenes in the scenes array of the movie object determines their playback sequence in the final video. Scenes cannot overlap in time.
+
+Properties#
+background-color#
+Defines the background color of the scene. Use a hexadecimal color code (e.g., #FF0000 for red) to specify the desired color, or set it to transparent for a see-through background. The default background color is black (#000000).
+
+Type	string
+Required	No
+Default Value	"#000000"
+cache#
+If true, the system will attempt to reuse a previously rendered (cached) version of this scene, if an identical version is available. This can significantly speed up processing. If false, a new render of the scene will always be performed. The default value is true.
+
+Type	boolean
+Required	No
+Default Value	true
+comment#
+A field for adding descriptive notes or internal memos related to the scene. This comment is for your reference and does not affect the rendering process. It can be used to keep notes about the scene like describing the content or the purpose of the scene.
+
+Type	string
+Required	No
+condition#
+An expression that determines whether the scene will be included in the final video. The scene is rendered only if the condition evaluates to true. If the condition evaluates to false or it is an empty string, the scene will be skipped and not included in the movie. The expression can be any valid string that evaluates to a boolean value.
+
+Type	string
+Required	No
+duration#
+Defines the duration of the scene in seconds. Use a positive value to specify the scene's length. A value of -1 indicates that the scene should automatically adjust its duration to accommodate all elements it contains.
+
+Type	number
+Required	No
+Default Value	-1
+Format	float
+elements#
+An array of element objects containing the elements to be rendered in the scene. Elements can include videos, images, text, HTML snippets, components, templates, audio, AI generated voiceovers, audiograms, and subtitles. The order of the elements within this array determines their layering in the scene, with elements appearing later in the array rendered on top of earlier elements.
+
+Type	array
+Required	No
+Array Items#
+id#
+A unique identifier for the scene within the movie. This string allows you to reference and manage individual scenes. The system can automatically generate a random string if one is not provided.
+
+Type	string
+Required	No
+Default Value	"@randomString"
+variables#
+Defines scene-specific variables that can be used to dynamically populate templates or other elements within the scene. The value of each variable can be a string, number, boolean, or any other valid JSON type. Variable names are restricted to letters, numbers, and underscores, allowing you to personalize your video content at the scene level by injecting dynamic values during the rendering process.
+
+Type	object
+Required	No
+Default Value	{}

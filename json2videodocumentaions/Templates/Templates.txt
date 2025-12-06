@@ -1,0 +1,78 @@
+Templates#
+Templates in JSON2Video allow you to save and reuse JSON scripts, streamlining your video creation process. They are especially powerful when combined with variables, enabling you to customize your videos dynamically without altering the core script.
+
+Key Benefits of Using Templates#
+Reusability: Store and reuse your video scripts across multiple projects.
+Centralized Management: Update a template once, and all new videos created from that template will reflect the changes.
+Simplified Customization: Use variables to inject dynamic content into your videos without modifying the underlying JSON structure.
+No-Code Integration Friendly: Simplifies integration with no-code platforms like Zapier and Make, where you can reference a template ID instead of passing the entire JSON payload.
+Use Cases:
+
+Templates are ideal for scenarios where you create videos with consistent structure and design, such as:
+
+Automated social media content
+Video ads for different products or services
+Personalized marketing videos
+Data-driven visualizations
+When should you use movie templates#
+Movie templates are suitable for the following use cases:
+
+When the videos you are creating are consistent and don't change too much. For example, they have the same structure and you are only changing elements like text, images, audio or voice elements.
+
+Even if you don't know in advance the number of scenes or the number of elements in each scene, you can use a template with a variable number of scenes.
+
+When you are integrating with no code tools like Zapier or Make. In this case, you only need to provide a reference to the template and you don't need to provide the JSON script in the request.
+
+Movie templates are not a good choice for the following use cases:
+
+When the movie structure significantly changes for each render. In this case you should create the movie building the JSON script programmatically.
+Creating Templates#
+You can create templates from the Dashboard following these steps:
+
+Go to the Templates section in the Dashboard
+Click on the Add new template button at the bottom of the page
+Click on the recently created template to open the editor
+Rename the template by clicking on the template name in the top bar
+Edit the template using the visual editor or the JSON editor (in the Template menu on the top bar)
+The visual editor auto saves your changes every 5 seconds
+Calling Templates from the API#
+Instead of sending a complete JSON payload, you simply reference the template ID in your API request:
+
+{
+  "comment": "Using a template ID",
+  "template": "[[YOUR_TEMPLATE_ID]]",
+  "variables": {
+    "title": "Dynamic Title",
+    "bgColor": "#00FF00"
+  }
+}
+Copy
+When you call a template, any scenes or elements arrays are ignored.
+
+Template examples#
+Basic template example#
+{
+	"comment": "Hello world example",
+	"resolution": "full-hd",
+	"variables": {
+		"message": "Hello world!"
+	},
+	"scenes": [
+		{
+			"background-color": "#4392F1",
+			"elements": [
+				{
+					"type": "text",
+					"style": "005",
+					"text": "{{message}}",
+					"duration": 10
+				}
+			]
+		}
+	]
+}
+Copy
+The template above will be rendered as a single scene with a blue background and the text defined by the message variable displayed in the center of the screen.
+
+More examples#
+You can find some template examples in the Template examples in this documentation.

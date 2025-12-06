@@ -1,0 +1,18 @@
+API Endpoints#
+The current version of the API is 2.
+
+The base URL for all API requests is:
+
+https://api.json2video.com/v2
+
+This section details the available endpoints for the JSON2Video API.
+
+Available Endpoints#
+The following endpoints are currently available:
+
+/movies#
+This endpoint allows you to:
+
+Create a new movie: POST https://api.json2video.com/v2/movies
+Check the status of a movie: GET https://api.json2video.com/v2/movies/?project={projectId}
+See the sections on Movies in the Movie JSON Schema for more information.

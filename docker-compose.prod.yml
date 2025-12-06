@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  api:
+    image: ${IMAGE}
+    container_name: language-video-generator-api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
+      - ASPNETCORE_URLS=http://+:80
+      - Json2Video__ApiKey=${JSON2VIDEO_API_KEY}
+      - OpenAI__ApiKey=${OPENAI_API_KEY}
+    ports:
+      - "${HOST_HTTP_PORT:-11000}:80"
+    restart: unless-stopped
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

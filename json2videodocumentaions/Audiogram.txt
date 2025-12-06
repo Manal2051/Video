@@ -1,0 +1,272 @@
+Audiogram#
+Type: object
+
+Visualizes the audio waveform of the scene or movie as an audiogram. The audiogram's appearance can be customized with properties such as color, opacity, relative amplitude, width, and height. A width or height of -1 will inherit the movie's dimensions. The audiogram's duration can be set explicitly or configured to match the duration of its parent scene or the movie itself.
+
+Required Properties#
+type
+Properties#
+amplitude#
+Defines the scaling factor for the audiogram's wave amplitude, influencing the visual prominence of the waves. This value ranges from 0 to 10, where higher values result in taller and more pronounced waves, while lower values create subtler visualizations. A default value of 5 provides a balanced visual representation.
+
+Type	number
+Required	No
+Default Value	5
+Format	float
+Minimum Value	0
+Maximum Value	10
+cache#
+If true, the system will attempt to retrieve and use a previously rendered (cached) version of this element, if an identical version is available. This can significantly reduce processing time. If false, a new render of the element will always be performed, regardless of whether a cached version exists. The default value is true.
+
+Type	boolean
+Required	No
+Default Value	true
+Format	boolean
+chroma-key#
+Allows you to define a color or a range of colors within the element that will be rendered as transparent. This effect is commonly known as chroma keying or 'green screen'. The color property specifies the base color to be made transparent, while the optional tolerance property adjusts the sensitivity of the transparency, allowing you to define a range of similar colors to also be included in the transparency effect.
+
+Type	object
+Required	No
+This object contains the following properties:
+
+color: (string, required) - Set the color for which alpha will be set to 0 (full transparency)
+
+Example: "#00b140"
+tolerance: (integer, optional) - Makes the selection more or less sensitive to changes in color. A value of 1 will select only the provided color. A value of 100 will select all colors, so the full canvas
+
+Default: 25
+Minimum: 1
+Maximum: 100
+color#
+The hexadecimal color code (e.g., #FF0000 for red) that defines the color of the waves displayed in the audiogram visualization. This allows you to customize the audiogram's appearance to match your video's aesthetics.
+
+Type	string
+Required	No
+comment#
+A field for adding descriptive notes or internal memos related to the element. This comment is for your reference and does not affect the rendering process. It can be used to keep notes about the element like describing the content or the purpose of the element.
+
+Type	string
+Required	No
+condition#
+A string containing an expression that determines whether the element will be rendered. The element is rendered only if the condition evaluates to true. If the condition is false or an empty string, the element will be skipped and not included in the scene or movie.
+
+Type	string
+Required	No
+correction#
+Defines image and video correction settings, allowing you to adjust the visual characteristics of the element. This includes properties for adjusting contrast, brightness, saturation, and gamma, enabling fine-tuning of the element's appearance. Values in the edge of the range may result in the element being irrecognizable.
+
+Type	object
+Required	No
+This object contains the following properties:
+
+brightness: (number, optional) - Adjust the brightness
+
+Default: 0
+Minimum: -1
+Maximum: 1
+contrast: (number, optional) - Adjust the contrast
+
+Default: 1
+Minimum: -1000
+Maximum: 1000
+gamma: (number, optional) - Adjust the gamma
+
+Default: 1
+Minimum: 0.1
+Maximum: 10
+saturation: (number, optional) - Adjust the saturation
+
+Default: 1
+Minimum: 0
+Maximum: 3
+crop#
+Defines the cropping area of the element. It allows you to specify a rectangular region of the element to display, effectively cropping the external parts of the provided area. The x and y properties define the top-left corner of the cropping rectangle, while the width and height properties determine the dimensions of the cropped area.
+
+Type	object
+Required	No
+This object contains the following properties:
+
+height: (integer, required) - Sets the height of the cropping area
+
+width: (integer, required) - Sets the width of the cropping area
+
+x: (integer, optional) - Sets the left point of cropping
+
+Default: 0
+y: (integer, optional) - Sets the top point of cropping
+
+Default: 0
+duration#
+Defines the duration of the audiogram element in seconds. Use a positive value to specify the exact duration. A value of -1 instructs the system to automatically calculate the duration based on the intrinsic length of the audio being visualized. A value of -2 sets the audiogram's duration to match that of its parent scene (if the audiogram is within a scene) or the entire movie (if the audiogram is in the movie's top-level elements array).
+
+Type	number
+Required	No
+Default Value	-2
+Format	float
+Minimum Value	-2
+extra-time#
+The amount of time, in seconds, to extend the element's duration beyond its natural length. This allows the element to linger on screen after its content has finished playing or displaying. For example, setting extra-time to 0.5 will keep the element visible for an additional half-second.
+
+Type	number
+Required	No
+Default Value	0
+Format	float
+fade-in#
+The duration, in seconds, of the fade-in effect applied to the element's appearance. A value of 0 means no fade-in effect. Larger values result in a longer fade-in duration. The value must be a non-negative number.
+
+Type	number
+Required	No
+Format	float
+Minimum Value	0
+fade-out#
+The duration, in seconds, of the fade-out effect applied to the element's disappearance. A value of 0 means no fade-out effect. Larger values result in a longer fade-out duration. The value must be a non-negative number.
+
+Type	number
+Required	No
+Format	float
+Minimum Value	0
+flip-horizontal#
+If true, the element will be flipped horizontally, creating a mirror image effect. The default value is false.
+
+Type	boolean
+Required	No
+Default Value	false
+flip-vertical#
+If true, the element will be flipped vertically, creating an upside-down image. The default value is false.
+
+Type	boolean
+Required	No
+Default Value	false
+height#
+Sets the height of the element in pixels, scaling the element up or down as needed to fit the specified height. A value of -1 maintains the element's original aspect ratio when resizing based on the width property. If 'resize' is set, the 'height' property is ignored. The minimum accepted value is -1.
+
+Type	integer
+Required	No
+Default Value	-1
+Minimum Value	-1
+id#
+A unique identifier for the element within the movie. This string allows you to reference and manage individual elements. If not provided, the system will automatically generate a random string.
+
+Type	string
+Required	No
+Default Value	"@randomString"
+mask#
+URL to a PNG or video file that defines a mask, controlling the transparency of the element. The mask uses a grayscale color scheme: black areas render the element fully transparent, white areas render it fully opaque, and shades of gray create varying levels of partial transparency. This allows you to create complex shapes and effects by selectively hiding portions of the element.
+
+Type	string
+Required	No
+opacity#
+The opacity of the audiogram, ranging from 0.0 (fully transparent) to 1.0 (fully opaque). A value of 0.5 represents 50% transparency.
+
+Type	number
+Required	No
+Default Value	0.5
+Format	float
+Minimum Value	0
+Maximum Value	1
+pan#
+Specifies the direction to pan the element within its container. Valid values are left, top, right, bottom, and their combinations like top-left. If the zoom property is also specified, the pan will occur while zooming. If zoom is not specified, the element will pan without zooming.
+
+Type	string
+Required	No
+Enum Values	left, top, right, bottom, top-left, top-right, bottom-left, bottom-right
+pan-crop#
+When panning an element, this boolean property determines whether the element is stretched and cropped to fill the movie canvas. If set to true (default), the element will be stretched and cropped during panning. If set to false, the element will not be stretched and potentially leave empty space within the movie canvas. Example: if pan-crop is set to false and the movie canvas and element have the same size, panning the element to the left may leave a black bar on the right side of the movie canvas as the element moves to the left. If pan-crop is set to true (default), the element will be stretched and cropped during panning, so the element will effectively fill the movie canvas.
+
+Type	boolean
+Required	No
+Default Value	true
+pan-distance#
+Defines the distance the element pans within its container when the pan property is specified. This value, expressed as a floating-point number, determines the amount of movement during the panning effect. Higher values result in faster and more pronounced panning. The allowed range is from 0.01 to 0.5, with a default value of 0.1.
+
+Type	number
+Required	No
+Default Value	0.1
+Format	float
+Minimum Value	0.01
+Maximum Value	0.5
+position#
+Specifies the position of the element within the movie canvas. Choose from predefined positions like 'top-left', 'top-right', 'bottom-right', 'bottom-left', and 'center-center' to quickly place the element. Selecting 'custom' enables precise positioning using the x and y properties to define the element's horizontal and vertical coordinates.
+
+Type	string
+Required	No
+Default Value	"custom"
+Enum Values	top-left, top-right, bottom-right, bottom-left, center-center, custom
+resize#
+Defines how the element should be resized to fit within the movie canvas. The values cover and fill stretch the element to completely cover the movie canvas, potentially cropping parts of the element. The values fit and contain ensure the entire element is visible, potentially leaving empty space within the canvas. When resize is set, the width and height properties are ignored, as the element's size is determined by the chosen resize mode. The value coveris a synonym for fill and containis a synonym for fit.
+
+Type	string
+Required	No
+Enum Values	cover, fill, fit, contain
+rotate#
+Defines the rotation properties of the element. It allows you to specify the angle of rotation and the time it takes to complete the rotation, enabling animated rotation effects.
+
+Type	object
+Required	No
+This object contains the following properties:
+
+angle: (number, required) - Sets the angle of rotation
+
+Default: 0
+Minimum: -360
+Maximum: 360
+speed: (number, optional) - Sets the time it takes to rotate the provided angle. A zero value means no movement
+
+Default: 0
+Minimum: 0
+start#
+The element's start time, in seconds, determines when it begins playing within its container's timeline. This time is relative to the beginning of the scene it's in or, if the element is part of the movie's elements array, relative to the beginning of the movie itself. The default value is 0, meaning the element starts at the beginning of its container's timeline.
+
+Type	number
+Required	No
+Default Value	0
+Format	float
+type#
+This field specifies the element's type and must be set to audiogram to indicate that this element is an audiogram visualization.
+
+Type	string
+Required	Yes
+Enum Values	audiogram
+variables#
+Defines local variables specific to this element. These variables can be used to dynamically alter the element's properties or content during the rendering process. Variable names must consist of only letters, numbers, and underscores.
+
+Type	object
+Required	No
+Default Value	{}
+width#
+Sets the width of the element in pixels. The element will be scaled up or down to fit the specified width. A value of -1 instructs the system to maintain the element's original aspect ratio when resizing based on the height property. If 'resize' is set, the 'width' property is ignored. The minimum accepted value is -1.
+
+Type	integer
+Required	No
+Default Value	-1
+Minimum Value	-1
+x#
+The horizontal position of the element within the movie canvas, measured in pixels. This property is only applicable when the position property is set to custom. A value of 0 places the element at the left edge of the movie canvas. Higher integer values move the element to the right.
+
+Type	number
+Required	No
+Default Value	0
+Format	integer
+y#
+Sets the vertical position of the element within the movie canvas, measured in pixels. This property is only applicable when the position property is set to custom. A value of 0 places the element at the top edge of the movie canvas. Higher integer values move the element downwards.
+
+Type	number
+Required	No
+Default Value	0
+Format	integer
+z-index#
+Element's z-index, determining its stacking order within the video. Higher values bring the element to the front, obscuring elements with lower values. Lower values send the element to the back, potentially behind other elements. The value must be an integer between -99 and 99; the default is 0. The natural way of layering elements is by the order of the elements in the elements array. If by any reason this does not work in your case, you can use the z-index property to manually control the stacking order.
+
+Type	number
+Required	No
+Default Value	0
+Format	integer
+Minimum Value	-99
+Maximum Value	99
+zoom#
+Zooms the element by a specified percentage. Use positive values (1-10) to zoom in and negative values (-1 to -10) to zoom out. A value of 0 results in no zoom. Combine with the pan property to control the focal point during zooming.
+
+Type	integer
+Required	No
+Minimum Value	-10
+Maximum Value	10

@@ -1,0 +1,46 @@
+Customizing Existing Templates#
+Often, you might want to adapt a pre-existing JSON2Video template to better suit your specific needs. This is a common scenario when following tutorials or using templates shared by others. You might find that while the core structure is helpful, some aspects like colors, element positions, or animations need adjustments.
+
+Let's say you followed an YouTube tutorial that provided you with an API call like this:
+
+{
+  "templateId": "1234567890",
+  "variables": {
+    "title": "My Customized Title"
+  }
+}
+Copy
+Imagine that the template with the ID "1234567890" displays a center-aligned title with a blue background. But you want a red background and a left-aligned title. How do you achieve this without altering the original template?
+
+The JSON2Video API doesn't directly support overriding elements or scenes when calling a template by ID. You can't selectively modify parts of the template within the API call itself.
+
+Duplicate and Customize the Template#
+The recommended approach is to:
+
+Duplicate the template: Create a copy of the existing template.
+Customize the copy: Modify the duplicated template to your liking.
+Use the new ID: Reference the ID of the duplicated template in your API call.
+Here's a step-by-step guide:
+
+Open the Template Editor: Navigate to the Visual Editor.
+
+Open by ID: In the Template menu at the top, select Open template by ID.
+
+Enter the Template ID: Paste the source template ID (e.g., "1234567890") into the dialog box. The template will load into the editor.
+
+Read-Only Awareness: If you don't own the original template, it will open in Read-only mode. You can still save a copy.
+
+Save a Duplicate: From the Template menu, choose Save template as. This creates a duplicate with a new, unique ID.
+
+Customize the Duplicate: Modify the duplicated template to your specifications. For example, change the background color and title alignment. The Visual Editor provides an intuitive way to make these changes. Alternatively, you can use the JSON editor available in the Template menu.
+
+Retrieve the New Template ID: Access the Template menu and select Show template ID to get the ID of the newly duplicated template.
+
+Use the New ID in Your API Call: Replace the original templateId with the new one in your API request:
+
+{
+  "templateId": "[[NEW_TEMPLATE_ID]]",
+  "variables": {
+    "title": "My Customized Title"
+  }
+}

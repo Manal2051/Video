@@ -1,0 +1,58 @@
+AI integrations#
+JSON2Video API allows you to integrate with AI models for asset generation like images, videos, audios, etc.
+
+Currently, JSON2Video API only supports AI generation for images and voiceovers, but we are working on adding videos and music generation in the short term.
+
+The asset generation with AI is done using the regular Elements API. The only difference is that you need to provide the AI model you want to use and the parameters for the AI model.
+
+You have two options to use the AI models:
+
+Using your own third-party API Keys (Bring your own API Keys, or BYOA)
+Using JSON2Video managed service
+JSON2Video managed service#
+When using JSON2Video managed service, any cost of using the AI models is charged by JSON2Video to your account. You don't need to open accounts, subscribing or providing credit card information to the third-party API providers. JSON2Video will handle all the setup and billing for you.
+
+JSON2Video managed service is the easiest way to use the AI models, and we try to keep the price as low as possible, even lower than the public pricing of the third-party API providers.
+
+Learn more about how pricing works for the managed service in Credit consumption.
+
+Bring your own API keys#
+When using BYOA, any cost of using the AI models is charged by the third-party API provider directly to you. You are responsible for setting up your account, managing the API keys and the costs associated with the AI models and keep enough credit in your account to generate the assets you need.
+
+Important note: Only paid Elevenlabs accounts can be used for voiceover generation.
+
+To use your own API keys, you must create a Connection in your JSON2Video dashboard.
+
+Create a Connection
+
+For example, if you want to use your own API keys for ElevenLabs you would do this:
+
+Create a Connection with a relevant ID for you (like my-elevenlabs-apikey)
+Select apikey as the type of connection
+Enter your API Key
+Save
+You can repeat this process for any other API Key you want to use.
+
+Create a new API key connection
+
+How to use your own API keys in your JSON2Video API requests#
+To use your own API keys in your JSON2Video API requests, you need to set the connection property to the ID of the Connection you created.
+
+For example, if you want to use your own API keys for ElevenLabs you would do this:
+
+{
+    "resolution": "full-hd",
+    "scenes": [
+        {
+            "elements": [
+                {
+                    "type": "voice",
+                    "model": "elevenlabs",
+                    "connection": "my-elevenlabs-apikey", // The ID of the Connection you created
+                    "text": "That's one small step for a man, one giant leap for mankind.",
+                    "voice": "Brian"
+                }
+            ]
+        }
+    ]
+}

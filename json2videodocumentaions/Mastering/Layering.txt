@@ -1,0 +1,115 @@
+Layering#
+Layering elements in a scene or movie#
+In JSON2Video, the order of elements within the elements array of a scene or movie dictates their layering. Elements listed later in the array are rendered on top of those listed earlier. This behavior mirrors the stacking context in HTML and CSS.
+
+Elements array order#
+The elements array order is the primary method for controlling layering. Elements listed later in the array are rendered on top of those listed earlier.
+
+Key Points:
+
+The first element in the array is the bottom-most layer.
+Each subsequent element is placed above the previous one.
+The last element in the array is the top-most layer and will obscure any overlapping elements beneath it.
+Example
+
+Consider the following JSON snippet:
+
+{
+  "scenes": [
+    {
+      "duration": 10,
+      "elements": [
+        {
+          "type": "image",
+          "src": "background.jpg",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        {
+          "type": "text",
+          "text": "Hello World"
+        }
+      ]
+    }
+  ]
+}
+Copy
+In this example, the image specified by background.jpg will be the background layer. The text "Hello World" will be rendered on top of the image.
+
+Overlapping Elements:
+
+If elements have overlapping coordinate spaces, the element with the higher stacking order will visually cover the element(s) below it.
+
+Controlling Layering with z-index#
+While the order in the elements array is the primary method for controlling layering, you can use the z-index property for more explicit control. The z-index property allows you to define the stacking order within a range of -99 to 99. Elements with higher z-index values are rendered on top of elements with lower values.
+
+Example:
+
+{
+  "scenes": [
+    {
+      "duration": 10,
+      "elements": [
+        {
+          "type": "text",
+          "text": "Hello World",
+          "z-index": 1
+        },
+        {
+          "type": "image",
+          "src": "background.jpg",
+          "z-index": -1
+        }
+      ]
+    }
+  ]
+}
+Copy
+In this example, the text continues to be rendered on top of the image, even though it's listed earlier in the elements array because the z-index of the text is set to 1 and the z-index of the image is set to -1.
+
+Transparent scenes with video backgrounds#
+By default, the elements in the Movie elements array are layered over the scenes. This is helpful for adding a logo, a watermark, or any other element on top of all scenes.
+
+But what if you want the scenes to have a transparent background and show a video background?
+
+You can achieve this by setting the background-color property of the scene objects to transparent and adding a video element to the elements array with a z-index lower than 0. Scenes always have a z-index of 0, so the video will be rendered behind the scenes.
+
+Example
+
+{
+  "scenes": [
+    {
+      "comment": "Scene 1",
+      "background-color": "transparent",
+      "duration": 5,
+      "elements": [
+        {
+          "type": "text",
+          "text": "This is scene 1"
+        }
+      ]
+    },
+    {
+      "comment": "Scene 2",
+      "background-color": "transparent",
+      "duration": 5,
+      "elements": [
+        {
+          "type": "text",
+          "text": "This is scene 2"
+        }
+      ]
+    }
+  ],
+  "elements": [
+    {
+      "type": "video",
+      "src": "https://cdn.json2video.com/assets/videos/beach-04.mp4",
+      "z-index": -1
+    }
+  ]
+}
+Copy
+In this example, the scenes have a transparent background and the video is shown through the transparent background of the scenes. The video is set to have a z-index of -1, which means it will be rendered behind the scenes.

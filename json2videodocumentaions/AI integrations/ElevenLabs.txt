@@ -1,0 +1,120 @@
+ElevenLabs#
+JSON2Video API integrates with ElevenLabs to provide high-quality AI-powered voiceovers. This integration enables you to generate realistic and expressive speech from text directly within your video creation workflow.
+
+Key Features#
+High-Quality Voice Generation: Leverage ElevenLabs' advanced AI models for natural-sounding voiceovers.
+Voice Variety: Choose from a wide range of pre-existing voices or use custom ElevenLabs voices.
+Simplified Integration: Seamlessly integrate voiceover generation into your video creation process with the Voice element.
+How to Use ElevenLabs in JSON2Video#
+Select the your preferred model: In your voice element, specify elevenlabs or elevenlabs-flash-v2-5 as the model value.
+Choose a Voice: Provide the name of a voice you want to use in the voice property. For example, "Adam" or "Rachel". See ElevenLabs Voices Library for available voices.
+Provide Text: Set the text you want the voice to speak in the text property.
+Configure a Connection (Optional): If you have your own ElevenLabs API key, create a Connection and set the connection ID to use your account.
+Credit Consumption#
+Using the ElevenLabs models will consume credits from your JSON2Video account. Refer to the Credit Consumption section for more details.
+
+Bring your own ElevenLabs API key#
+If you have your own ElevenLabs API key, you can use it to generate voiceovers. Check this page for more information on how to create a Connection to your ElevenLabs account.
+
+Examples#
+Basic Example:
+
+{
+  "scenes": [
+    {
+      "elements": [
+        {
+          "type": "voice",
+          "model": "elevenlabs",
+          "voice": "Adam",
+          "text": "Hello, I am an ElevenLabs generated voiceover."
+        }
+      ]
+    }
+  ]
+}
+Copy
+Using Your Own ElevenLabs API Key:
+
+{
+  "scenes": [
+    {
+      "elements": [
+        {
+          "type": "voice",
+          "model": "elevenlabs",
+          "connection": "my-elevenlabs-connection",
+          "voice": "p16ZaTyG1Ks9FQ9LpSun",
+          "text": "Hello, world!"
+        }
+      ]
+    }
+  ]
+}
+Copy
+Example using the ElevenLabs Flash v2.5 model:
+
+ElevenLabs Flash v2.5 model is a faster way to generate voiceovers that also supports a wide range of voices and languages. The credit consumption is the same of the ElevenLabs model. To generate a voiceover using Flash v2.5, use elevenlabs-flash-v2-5 as the value for the property model:
+
+{
+  "scenes": [
+    {
+      "elements": [
+        {
+          "type": "voice",
+          "model": "elevenlabs-flash-v2-5",
+          "voice": "Adam",
+          "text": "Hello, I am an ElevenLabs Flash v2.5 generated voiceover."
+        }
+      ]
+    }
+  ]
+}
+Copy
+Customizing ElevenLabs settings#
+JSON2Video's Voice element supports the model-settings property to pass custom configuration to ElevenLabs API. You can read the available settings in ElevenLabs's API reference here: https://elevenlabs.io/docs/api-reference/text-to-speech/convert#request
+
+Example using the model-settings property:
+
+{
+  "scenes": [
+    {
+      "elements": [
+        {
+          "type": "voice",
+          "model": "elevenlabs",
+          "voice": "p16ZaTyG1Ks9FQ9LpSun",
+          "text": "Hello, world!",
+          "model-settings": {
+            "language_code": "en"
+          }
+        }
+      ]
+    }
+  ]
+}
+Copy
+Changing the ElevenLabs speech speed#
+One of the voice_settings is speed that controls the speed of the voiceover. The value is a number between 0.7 and 1.2.
+
+Example changing the ElevenLabs speech speed:
+
+{
+  "scenes": [
+    {
+      "elements": [
+        {
+          "type": "voice",
+          "model": "elevenlabs",
+          "voice": "p16ZaTyG1Ks9FQ9LpSun",
+          "text": "Hello, world!",
+          "model-settings": {
+            "voice_settings": {
+              "speed": 1.2
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

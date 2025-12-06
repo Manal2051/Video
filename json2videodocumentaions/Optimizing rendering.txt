@@ -1,0 +1,112 @@
+Optimizing rendering#
+Optimizing your JSON2Video movies ensures faster rendering times and efficient resource usage. Here's a breakdown of key optimization techniques:
+
+Scene structure#
+The JSON2Video rendering engine is designed to render scenes in parallel. This means that the more scenes you can break your movie into, the faster it will render and the more efficient the rendering process will be.
+
+For example, a 30 second movie with a single scene will take longer to render than a movie with 3 scenes of 10 seconds each.
+
+As a rule of thumb, split your movie into scenes every time there is a significant visual change: Think of scenes as slides in a Powerpoint presentation.
+
+Bad example#
+This is an example of a wrong approach to structuring a movie:
+
+{
+    "resolution": "full-hd",
+    "scenes": [
+        {
+            "elements": [
+                {
+                    "type": "image",
+                    "src": "https://cdn.json2video.com/assets/images/london-01.jpg",
+                    "duration": 10
+                },
+                {
+                    "type": "image",
+                    "src": "https://cdn.json2video.com/assets/images/london-02.jpg",
+                    "start": 10,
+                    "duration": 10
+                },
+                {
+                    "type": "image",
+                    "src": "https://cdn.json2video.com/assets/images/london-03.jpg",
+                    "start": 20,
+                    "duration": 10
+                }
+            ]
+        }
+    ]
+}
+Copy
+The example above creates a slideshow of 3 images, one after the other. This is not efficient and will take longer to render and it can cause the rendering process to timeout.
+
+Good example#
+This is an example of a good approach to structuring the same movie:
+
+{
+    "resolution": "full-hd",
+    "scenes": [
+        {
+            "elements": [
+                {
+                    "type": "image",
+                    "src": "https://cdn.json2video.com/assets/images/london-01.jpg",
+                    "duration": 10
+                }
+            ]
+        },
+        {
+            "elements": [
+                {
+                    "type": "image",
+                    "src": "https://cdn.json2video.com/assets/images/london-02.jpg",
+                    "duration": 10
+                }
+            ]
+        },
+        {
+            "elements": [
+                {
+                    "type": "image",
+                    "src": "https://cdn.json2video.com/assets/images/london-03.jpg",
+                    "duration": 10
+                }
+            ]
+    ]
+}
+Copy
+In this example, the movie is split into 3 scenes, each with a single image. This is more efficient because each scene can be rendered in parallel and the rendering will be faster.
+
+Asset optimization#
+Ensure your source assets (videos, images, audio) are appropriately sized and formatted. Avoid unnecessarily high resolutions or large file sizes that can slow down rendering. Here are some specific strategies for optimizing different asset types:
+
+Images:
+
+Use formats like JPEG or PNG for images, depending on the content. JPEG is generally better for photographs, while PNG is suitable for images with transparency.
+Compress images to reduce file size without significantly affecting quality. Tools like TinyPNG or ImageOptim can help.
+Resize images to the dimensions needed for your video to avoid loading unnecessary data.
+Videos:
+
+Choose the right codec (e.g., H.264 for general use) and resolution for your videos. Higher resolutions (like 4K) can be overkill for many situations.
+You can use prores codec for videos with alpha channel (transparency), but keep them short and reasonable low bitrate.
+Use video compression tools to reduce file size while maintaining acceptable quality. HandBrake is a popular choice for this.
+Trim any unnecessary footage to keep the video length as short as possible.
+Audio:
+
+Use compressed audio formats like MP3 or AAC to reduce file size.
+Ensure audio files are not longer than necessary.
+Normalize audio levels to ensure consistent volume across different audio files.
+By following these guidelines, you can ensure that your assets are optimized for faster rendering and better performance in your JSON2Video projects.
+
+Caching#
+Utilize the cache property to reuse previously rendered assets (elements, scenes, or entire movies) whenever possible. Setting cache: true (the default) allows the system to serve content from the cache if an identical version is available, drastically reducing rendering time. Force a re-render with cache: false.
+
+Read more about caching in the Mastering > Caching system section.
+
+Transitions#
+Transitions are a great, but they can also slow down the rendering process as they require additional processing and may time out.
+
+Here are some tips for optimizing transitions:
+
+Avoid using transitions at all if you can. Instead of transitions, evaluate if you can use wipes instead.
+If you need to use transitions, use the fade transition. It is the most efficient and fastest transition.

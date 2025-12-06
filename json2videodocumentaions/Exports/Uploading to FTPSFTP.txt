@@ -1,0 +1,65 @@
+Uploading to FTP/SFTP#
+JSON2Video API allows you to automatically upload your rendered videos to FTP or SFTP servers. This eliminates the need to manually download and upload the videos, streamlining your workflow.
+
+Configuration#
+To configure FTP/SFTP upload, you need to define a destination of type ftp or sftp within the exports property of your movie object. For security reasons, it's recommended to store connection details in the dashboard and reference them by their id.
+
+Properties#
+The following properties are required for FTP and SFTP destinations:
+
+type: ftp or sftp
+host: The FTP/SFTP server hostname or IP address.
+port: The port number for the FTP/SFTP connection (e.g., 21 for FTP, 22 for SFTP).
+username: The username for authentication.
+password: The password for authentication.
+The following properties are optional:
+
+remote-path: The remote directory where the video will be uploaded. Defaults to the root directory (./).
+file: The desired filename for the uploaded video. If not specified, a unique filename will be generated based on the date and a random number.
+Macros#
+You can use macros in the remote-path and file properties to generate dynamic paths and filenames. The available macros are:
+
+__yyyy__: Year (e.g., 2023)
+__mm__: Month (e.g., 12)
+__dd__: Day (e.g., 25)
+__hh__: Hour (e.g., 12)
+__nn__: Minute (e.g., 30)
+__ss__: Second (e.g., 00)
+__random__: A random number (e.g., 31648)
+__filename__: The original filename created by the API (e.g., 2023-03-25-38267.mp4)
+__filename_without_extension__: The original filename without extension (e.g., 2023-03-25-38267)
+__filename_extension__: The original filename extension (e.g., mp4)
+Example using Connection ID (Recommended)#
+This is the recommended approach. Configure your FTP/SFTP connection in the dashboard and reference it using its id:
+
+{
+    "resolution": "full-hd",
+    "quality": "high",
+    "scenes": [],
+    "exports": [{
+        "destinations": [{
+            "id": "my-ftp-connection",
+            "file": "my_video_ __yyyy__-__mm__-__dd__.mp4"
+        }]
+    }]
+}
+Copy
+Example including credentials (Not Recommended)#
+Warning: Storing credentials directly in your API calls is not recommended for security reasons. Use Connections in the dashboard instead.
+
+{
+    "resolution": "full-hd",
+    "quality": "high",
+    "scenes": [],
+    "exports": [{
+        "destinations": [{
+            "type": "ftp",
+            "host": "ftp.example.com",
+            "port": 21,
+            "username": "ftp_user",
+            "password": "ftp_password",
+            "remote-path": "/videos/__yyyy__/__mm__/",
+            "file": "__random__.mp4"
+        }]
+    }]
+}

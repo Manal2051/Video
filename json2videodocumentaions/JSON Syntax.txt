@@ -1,0 +1,4 @@
+JSON Syntax#
+The Movie JSON Schema defines the structure of the JSON object that you send to the JSON2Video API to create a video. This schema outlines the properties that control the video's composition, including scenes, elements, and overall settings. Understanding this schema is crucial for effectively using the API to generate customized videos programmatically.
+
+The following sections detail the properties and structure within the Movie JSON Schema, providing a comprehensive guide for creating and customizing your videos. Subsequent pages will delve into the Movie, Scenes and the different Element objects.

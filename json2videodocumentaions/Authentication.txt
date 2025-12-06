@@ -1,0 +1,70 @@
+Authentication#
+All calls to the JSON2Video API require authentication. You must pass your API key in the x-api-key header of your request.
+
+How to Authenticate#
+To authenticate your API calls, include the x-api-key header in each request. The value of this header should be your unique API key.
+
+Example using curl:
+
+curl --location --request POST 'https://api.json2video.com/v2/movies' \
+--header 'x-api-key: [[YOUR_APIKEY]]' \
+--header 'Content-Type: application/json' \
+--data-raw '[[YOUR_JSON]]'
+Copy
+In this example, replace [[YOUR_APIKEY]] with your actual API key. The API key acts as your credential for accessing and using the JSON2Video API.
+
+Example using JavaScript (Axios):
+
+const axios = require('axios');
+
+axios.post('https://api.json2video.com/v2/movies', {
+    // Your JSON data here
+}, {
+    headers: {
+        'x-api-key': '[[YOUR_APIKEY]]',
+        'Content-Type': 'application/json'
+    }
+})
+.then(response => {
+    console.log(response.data);
+})
+.catch(error => {
+    console.error('Error:', error);
+});
+Copy
+Example using PHP:
+
+<?php
+
+$apiKey = '[[YOUR_APIKEY]]';
+$data = json_encode([
+    // Your JSON data here
+]);
+
+$ch = curl_init('https://api.json2video.com/v2/movies');
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_POST, true);
+curl_setopt($ch, CURLOPT_HTTPHEADER, [
+    'x-api-key: ' . $apiKey,
+    'Content-Type: application/json'
+]);
+curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+
+$response = curl_exec($ch);
+curl_close($ch);
+
+echo $response;
+?>
+Copy
+Where to Find Your API Key#
+You can obtain your API key by signing up for a JSON2Video user account.
+
+Get your free API Key
+
+Using the JSON2Video SDKs#
+The JSON2Video API is available for JavaScript and PHP. You can find the SDKs in the JSON2Video GitHub repository.
+
+Important Considerations#
+Security: Keep your API key confidential. Do not share it publicly or embed it directly in client-side code.
+Error Handling: If your API key is invalid or missing, the API will return an authentication error. Check the Troubleshooting section for details.
+Consistent Usage: Ensure that you include the x-api-key header in every request to the API. Failure to do so will result in authentication errors.

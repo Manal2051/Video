@@ -1,0 +1,109 @@
+Exports#
+JSON2Video API offers a variety of export options to choose from, allowing you to automate the post-rendering processes. This allows you to streamline your video creation workflow.
+
+The exports property within the movie object configures the export process, enabling options such as:
+
+Uploading videos to FTP or SFTP servers.
+Triggering webhooks for real-time notifications.
+Sending email notifications upon completion.
+These options are detailed further in the subsequent sections.
+
+The exports property#
+The exports property of the movie object is an array used to configure the export process, with the following options:
+
+{
+    "resolution": "full-hd",
+    "scenes": [],
+    "exports": [{
+        "destinations": [{
+            "id": "my-destination-id",
+        }]
+    }]
+}
+Copy
+Currently, the exports array only supports one item, but the destinations array can be used to specify multiple destinations.
+
+The destinations property#
+The destinations property of the exports object is an array used to configure the different destinations of the export process. You can specify multiple destinations for example to publish to more than one SFTP server.
+
+Each destination item is an object with different properties depending on the type of destination. Destination items are executed in the order they are specified in the destinations array, therefore the first destination item in the destinations array will be executed first, the second item will be executed after the first one finishes, etc.
+
+The following types of destinations are currently supported:
+
+FTP and SFTP destinations
+Webhook destinations
+Email destinations
+Exports timeout#
+The process of exporting to all the destinations is limited to 5 minutes. If any of the uploads takes too much time, the process may timeout and can be aborted.
+
+Defining destinations#
+For secutity reasons, it's not a good idea to include connection details and credentials in every call to the API, as they can be accidentally exposed. A solution to this is to define Connections in the dashboard to store all or part of the destination details and refer to them by an identifier (id).
+
+Connections
+
+The id is used to refer to the connection in the Connections section of the dashboard. In the example above, the id is test-ftp and the JSON would look like this:
+
+{
+    "resolution": "full-hd",
+    "quality": "high",
+    "scenes": [],
+    "exports": [{
+        "destinations": [{
+            "id": "test-ftp"
+        }]
+    }]
+}
+Copy
+Sensible fields (like passwords or API keys) are encrypted on the API side to keep them safe.
+
+If needed, any of the properties (with the exception of type) can be overwritten real-time in the destination object, for example:
+
+{
+    "resolution": "full-hd",
+    "quality": "high",
+    "scenes": [],
+    "exports": [{
+        "destinations": [{
+            "id": "test-ftp",
+            "file": "myfile.mp4"
+        }]
+    }]
+}
+Copy
+Macros#
+Field values can include macros that are evaluated at runtime and can be used to generate dynamic values.
+
+This is specially useful when you want to set the name of the file that will be uploaded to a server, or create an email message that includes the URL to download the file.
+
+The following macros are available:
+
+Macro	Description	Example
+__yyyy__	The year number	2023
+__mm__	The month number	12
+__dd__	The day number	25
+__hh__	The hour number	12
+__nn__	The minute number	30
+__ss__	The second number	00
+__random__	A random number	31648
+__filename__	The original file name created by the API	2023-03-25-38267.mp4
+__filename_without_extension__	The original file name without extension	2023-03-25-38267
+__filename_extension__	The original file name extension	mp4
+Example#
+Here is an example of using macros:
+
+{
+    "resolution": "full-hd",
+    "quality": "high",
+    "scenes": [...],
+    "exports": [{
+        "destinations": [{
+            "id": "my-ftp",
+            "remote-path": "./videos/__yyyy__/__mm__/",
+            "file": "__random__.mp4"
+        }]
+    }]
+}
+Copy
+In this example, when the movie is rendered, the video file will be uploaded to the FTP server defined in the connection with the id my-ftp and the file will be named 31648.mp4 and uploaded to the path ./videos/2025/03/.
+
+Note: assuming the current date is 2025-03-13 and the random number generated is 31648.

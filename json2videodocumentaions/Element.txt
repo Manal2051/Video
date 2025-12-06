@@ -1,0 +1,50 @@
+Element#
+The element object represents the fundamental building block of a movie or scene in JSON2Video. Elements are the content components that make up your video, such as images, videos, text, audio, and more. The properties and behavior of an element are determined by its specific type.
+
+Element Types#
+JSON2Video supports a variety of element types, each with its own unique properties and capabilities:
+
+image: Displays a static image. See Image element.
+video: Includes a video clip. See Video element.
+text: Overlays text on the video. See Text element.
+component: Inserts a pre-designed, animated component. See Component element.
+audio: Includes an audio track. See Audio element.
+voice: Generates a voiceover from text. See Voice element.
+audiogram: Visualizes an audio waveform. See Audiogram element.
+subtitles: Adds subtitles to the video. See Subtitles element.
+General Properties#
+All element types share a set of common properties that control their behavior and appearance:
+
+id: A unique identifier for the element.
+condition: An expression that determines whether the element will be rendered.
+variables: Local variables specific to this element.
+comment: A field for descriptive notes or internal memos.
+duration: The length of time the element is visible or audible.
+start: The starting point of the element within its container's timeline.
+extra-time: Adds additional time after the element's duration ends.
+z-index: Determines the stacking order of elements (layering).
+cache: Controls whether the element is rendered from the cache.
+fade-in: The duration, in seconds, of the fade-in effect.
+fade-out: The duration, in seconds, of the fade-out effect.
+How to use elements#
+Elements are added to scenes or to the movie's elements array. The only difference is that elements added directly to the movie will be displayed on top of all scenes, while elements added to a scene will only be displayed in that scene.
+
+Example#
+{
+  "resolution": "full-hd",
+  "scenes": [
+    {
+      "elements": [
+        {
+          "type": "image",
+          "src": "https://example.com/path/to/my/image.png"
+        },
+        {
+          "type": "text",
+          "text": "My Awesome Text!",
+          "style": "001"
+        }
+      ]
+    }
+  ]
+}

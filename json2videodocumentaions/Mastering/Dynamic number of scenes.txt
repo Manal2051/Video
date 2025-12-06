@@ -1,0 +1,48 @@
+Dynamic number of scenes#
+Sometimes it's necessary to create a video where the number of scenes is not fixed but determined dynamically based on data. For example, you might want to create a slideshow where the number of images and their associated durations are defined in a data source. JSON2Video supports this through the iterate property within a scene definition.
+
+Using the iterate property#
+The iterate property allows you to repeat a scene definition for each item in an array specified in the variables section of the movie.
+
+Example:
+
+{
+  "comment": "Variable number of scenes example",
+  "resolution": "full-hd",
+  "variables": {
+    "slides": [
+      {
+        "image_url": "https://example.com/image1.jpg",
+        "duration": 5,
+        "title": "Slide 1"
+      },
+      {
+        "image_url": "https://example.com/image2.jpg",
+        "duration": 3,
+        "title": "Slide 2"
+      },
+      {
+        "image_url": "https://example.com/image3.jpg",
+        "duration": 7,
+        "title": "Slide 3"
+      }
+    ]
+  },
+  "scenes": [
+    {
+      "iterate": "slides",
+      "duration": "{{duration}}",
+      "elements": [
+        {
+          "type": "image",
+          "src": "{{image_url}}"
+        },
+        {
+          "type": "text",
+          "text": "{{title}}",
+          "style": "005"
+        }
+      ]
+    }
+  ]
+}

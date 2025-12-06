@@ -1,0 +1,47 @@
+Conditional elements#
+You can create templates that include or exclude elements based on the value of an expression. This is useful to create dynamic templates that can adapt to different situations.
+
+For example, you can create a template that includes a different number of scenes based on the value of a variable. Or you can create a scene that includes a different set of elements based on the value of another variable.
+
+The condition property#
+To create a conditional element or scene, you need to use the condition property. The condition property is an expression that will be evaluated to a boolean value. If the condition is true, the element or scene will be included in the template. If the condition is false or the variable is an empty string, the element or scene will be excluded from the template.
+
+The condition is evaluated in the context of the variable values that are available at the time the template is rendered. This means that the condition can use the same variables that are used in the rest of the template. For example, you can create a condition that includes an element only if a variable is greater than 10, or that includes an element only if another variable is not empty.
+
+Examples#
+Conditional element#
+The following example shows a template that includes a scene with two text elements, depending on the value of the message_to_show variable it will show one or the other.
+
+{
+	"comment": "Conditional elements example",
+	"resolution": "full-hd",
+    "variables": {
+        "message_to_show": 1,
+        "message1": "This is message 1",
+        "message2": "This is message 2",
+        "bgColor": "#4392F1"
+    },
+	"scenes": [
+		{
+			"background-color": "{{bgColor}}",
+			"elements": [
+				{
+					"condition": "{{message_to_show == 1}}",
+					"type": "text",
+					"style": "005",
+					"text": "{{message1}}",
+					"duration": 10
+				},
+                {
+					"condition": "{{message_to_show == 2}}",
+                    "type": "text",
+                    "style": "005",
+                    "text": "{{message2}}",
+                    "duration": 10
+                }
+			]
+		}
+	]
+}
+Copy
+In the example above, the first text element will be shown because the message_to_show variable is equal to 1. The second text element will be bypassed because {{message_to_show == 2}} evaluates to false.

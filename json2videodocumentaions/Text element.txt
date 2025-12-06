@@ -1,0 +1,378 @@
+Text element#
+Type: object
+
+Defines a text element that allows you to overlay a text on top of your video. Depending on the style selected, the text can include different text animations like word-by-word, character-by-character, or jumping letters.
+
+Related links#
+Text Styles: Check out the available text styles and their corresponding visual characteristics.
+Customizing the Text element#
+The Text element can be customized to include a variety of text styles, fonts, and colors. You must use the settings object to customize the text element.
+
+Example:
+
+{
+  "type": "text",
+  "text": "Hello, world!",
+  "settings": {
+    "font-family": "Roboto",
+    "font-size": "48px",
+    "font-weight": "700",
+    "font-color": "#000000",
+    "background-color": "#FFFFFF",
+    "text-align": "center"
+  }
+}
+Copy
+Most of the CSS properties are supported in the settings object.
+
+Available font families#
+Google Fonts#
+You can use any Google Font in the font-family property just by providing the font name.
+
+Examples:
+
+Roboto
+Lato
+Montserrat
+Open Sans
+Poppins
+Raleway
+In some cases, Google Fonts don't use the same font name as the one used in the font-family property. This is the case for some of the Noto fonts that support different languages.
+
+Common Noto font families for different languages:
+
+Noto Sans – supports multiple languages
+Noto Serif – supports multiple languages
+Noto Sans JP – supports Japanese
+Noto Sans SC – supports Chinese Simplified
+Noto Sans TC – supports Chinese Traditional
+Noto Sans KR – supports Korean
+Noto Sans Thai – supports Thai
+Noto Sans Hebrew – supports Hebrew
+Noto Sans Arabic – supports Arabic
+Example:
+
+{
+  "type": "text",
+  "text": "헬로 월드",
+  "settings": {
+    "font-family": "Noto Sans KR",
+  }
+}
+Copy
+Custom fonts#
+You can use any custom font in the font-family property by providing a URL to the font file. TrueType fonts (.ttf) and OpenType fonts (.otf) are supported.
+
+Example:
+
+{
+  "type": "text",
+  "text": "Hello, world!",
+  "settings": {
+   "font-family": "https://example.com/fonts/custom-font.ttf"
+  }
+}
+Copy
+NOTE Be aware that the custom fonts in the subtitles element use the font-url property instead of the font-family property.
+
+Positioning the Text element#
+The Text element is structured to provide flexibility in positioning text within your video. It consists of two main concepts:
+
+Text Element Canvas Area:
+
+This is the outer area that can occupy the full size of the video canvas. It serves as the boundary within which the text box is placed. The canvas can be adjusted to fit the full video size or a custom size.
+Textbox Inside the Canvas:
+
+Within the text element canvas, there is a textbox that can be aligned both vertically and horizontally. This alignment feature ensures that regardless of the text length, the textbox can be positioned accurately within the canvas.
+The final position of the textbox relative to the video canvas is determined by the combination of:
+
+The size and position of the text element canvas.
+The alignment settings of the textbox within the canvas.
+This approach is particularly useful for dynamically positioning the textbox. Even if the textbox expands or contracts due to varying text lengths, it will maintain its alignment within the canvas. This ensures a consistent and visually appealing presentation of text in your video, regardless of content changes.
+
+To position the textbox inside the canvas, you must use the vertical-position and horizontal-position properties. The vertical-position property can be one of the following values:
+
+top
+center
+bottom
+The horizontal-position property can be one of the following values:
+
+left
+center
+right
+Example:
+
+{
+  "type": "text",
+  "text": "Hello, world!",
+  "settings": { 
+   "vertical-position": "top", 
+   "horizontal-position": "right" 
+  }
+}
+Copy
+This example will position the textbox to the top-right corner of the Text element canvas. As the Text element canvas defaults to the full size of the video canvas, the textbox will be positioned to the top-right corner of the video.
+
+Properties#
+The following properties are required:
+
+text
+type
+cache#
+If true, the system will attempt to retrieve and use a previously rendered (cached) version of this element, if an identical version is available. This can significantly reduce processing time. If false, a new render of the element will always be performed, regardless of whether a cached version exists. The default value is true.
+
+Type	boolean
+Required	No
+Default Value	true
+Format	boolean
+chroma-key#
+Allows you to define a color or a range of colors within the element that will be rendered as transparent. This effect is commonly known as chroma keying or 'green screen'. The color property specifies the base color to be made transparent, while the optional tolerance property adjusts the sensitivity of the transparency, allowing you to define a range of similar colors to also be included in the transparency effect.
+
+Type	object
+Required	No
+This object contains the following properties:
+
+color: (string, required) - Set the color for which alpha will be set to 0 (full transparency)
+
+Example: "#00b140"
+tolerance: (integer, optional) - Makes the selection more or less sensitive to changes in color. A value of 1 will select only the provided color. A value of 100 will select all colors, so the full canvas
+
+Default: 25
+Minimum: 1
+Maximum: 100
+comment#
+A field for adding descriptive notes or internal memos related to the element. This comment is for your reference and does not affect the rendering process. It can be used to keep notes about the element like describing the content or the purpose of the element.
+
+Type	string
+Required	No
+condition#
+A string containing an expression that determines whether the element will be rendered. The element is rendered only if the condition evaluates to true. If the condition is false or an empty string, the element will be skipped and not included in the scene or movie.
+
+Type	string
+Required	No
+correction#
+Defines image and video correction settings, allowing you to adjust the visual characteristics of the element. This includes properties for adjusting contrast, brightness, saturation, and gamma, enabling fine-tuning of the element's appearance. Values in the edge of the range may result in the element being irrecognizable.
+
+Type	object
+Required	No
+This object contains the following properties:
+
+brightness: (number, optional) - Adjust the brightness
+
+Default: 0
+Minimum: -1
+Maximum: 1
+contrast: (number, optional) - Adjust the contrast
+
+Default: 1
+Minimum: -1000
+Maximum: 1000
+gamma: (number, optional) - Adjust the gamma
+
+Default: 1
+Minimum: 0.1
+Maximum: 10
+saturation: (number, optional) - Adjust the saturation
+
+Default: 1
+Minimum: 0
+Maximum: 3
+crop#
+Defines the cropping area of the element. It allows you to specify a rectangular region of the element to display, effectively cropping the external parts of the provided area. The x and y properties define the top-left corner of the cropping rectangle, while the width and height properties determine the dimensions of the cropped area.
+
+Type	object
+Required	No
+This object contains the following properties:
+
+height: (integer, required) - Sets the height of the cropping area
+
+width: (integer, required) - Sets the width of the cropping area
+
+x: (integer, optional) - Sets the left point of cropping
+
+Default: 0
+y: (integer, optional) - Sets the top point of cropping
+
+Default: 0
+duration#
+Defines the duration of the text element in seconds. Use a positive value to specify the length of time the text is displayed. A value of -1 automatically calculates the duration based on the text animation duration. A value of -2 sets the element's duration to match the duration of its container (being either the parent scene or the movie).
+
+Type	number
+Required	No
+Default Value	-2
+Format	float
+Minimum Value	-2
+extra-time#
+The amount of time, in seconds, to extend the element's duration beyond its natural length. This allows the element to linger on screen after its content has finished playing or displaying. For example, setting extra-time to 0.5 will keep the element visible for an additional half-second.
+
+Type	number
+Required	No
+Default Value	0
+Format	float
+fade-in#
+The duration, in seconds, of the fade-in effect applied to the element's appearance. A value of 0 means no fade-in effect. Larger values result in a longer fade-in duration. The value must be a non-negative number.
+
+Type	number
+Required	No
+Format	float
+Minimum Value	0
+fade-out#
+The duration, in seconds, of the fade-out effect applied to the element's disappearance. A value of 0 means no fade-out effect. Larger values result in a longer fade-out duration. The value must be a non-negative number.
+
+Type	number
+Required	No
+Format	float
+Minimum Value	0
+flip-horizontal#
+If true, the element will be flipped horizontally, creating a mirror image effect. The default value is false.
+
+Type	boolean
+Required	No
+Default Value	false
+flip-vertical#
+If true, the element will be flipped vertically, creating an upside-down image. The default value is false.
+
+Type	boolean
+Required	No
+Default Value	false
+height#
+Sets the height of the element in pixels, scaling the element up or down as needed to fit the specified height. A value of -1 maintains the element's original aspect ratio when resizing based on the width property. If 'resize' is set, the 'height' property is ignored. The minimum accepted value is -1.
+
+Type	integer
+Required	No
+Default Value	-1
+Minimum Value	-1
+id#
+A unique identifier for the element within the movie. This string allows you to reference and manage individual elements. If not provided, the system will automatically generate a random string.
+
+Type	string
+Required	No
+Default Value	"@randomString"
+mask#
+URL to a PNG or video file that defines a mask, controlling the transparency of the element. The mask uses a grayscale color scheme: black areas render the element fully transparent, white areas render it fully opaque, and shades of gray create varying levels of partial transparency. This allows you to create complex shapes and effects by selectively hiding portions of the element.
+
+Type	string
+Required	No
+pan#
+Specifies the direction to pan the element within its container. Valid values are left, top, right, bottom, and their combinations like top-left. If the zoom property is also specified, the pan will occur while zooming. If zoom is not specified, the element will pan without zooming.
+
+Type	string
+Required	No
+Enum Values	left, top, right, bottom, top-left, top-right, bottom-left, bottom-right
+pan-crop#
+When panning an element, this boolean property determines whether the element is stretched and cropped to fill the movie canvas. If set to true (default), the element will be stretched and cropped during panning. If set to false, the element will not be stretched and potentially leave empty space within the movie canvas. Example: if pan-crop is set to false and the movie canvas and element have the same size, panning the element to the left may leave a black bar on the right side of the movie canvas as the element moves to the left. If pan-crop is set to true (default), the element will be stretched and cropped during panning, so the element will effectively fill the movie canvas.
+
+Type	boolean
+Required	No
+Default Value	true
+pan-distance#
+Defines the distance the element pans within its container when the pan property is specified. This value, expressed as a floating-point number, determines the amount of movement during the panning effect. Higher values result in faster and more pronounced panning. The allowed range is from 0.01 to 0.5, with a default value of 0.1.
+
+Type	number
+Required	No
+Default Value	0.1
+Format	float
+Minimum Value	0.01
+Maximum Value	0.5
+position#
+Specifies the position of the element within the movie canvas. Choose from predefined positions like 'top-left', 'top-right', 'bottom-right', 'bottom-left', and 'center-center' to quickly place the element. Selecting 'custom' enables precise positioning using the x and y properties to define the element's horizontal and vertical coordinates.
+
+Type	string
+Required	No
+Default Value	"custom"
+Enum Values	top-left, top-right, bottom-right, bottom-left, center-center, custom
+resize#
+Defines how the element should be resized to fit within the movie canvas. The values cover and fill stretch the element to completely cover the movie canvas, potentially cropping parts of the element. The values fit and contain ensure the entire element is visible, potentially leaving empty space within the canvas. When resize is set, the width and height properties are ignored, as the element's size is determined by the chosen resize mode. The value coveris a synonym for fill and containis a synonym for fit.
+
+Type	string
+Required	No
+Enum Values	cover, fill, fit, contain
+rotate#
+Defines the rotation properties of the element. It allows you to specify the angle of rotation and the time it takes to complete the rotation, enabling animated rotation effects.
+
+Type	object
+Required	No
+This object contains the following properties:
+
+angle: (number, required) - Sets the angle of rotation
+
+Default: 0
+Minimum: -360
+Maximum: 360
+speed: (number, optional) - Sets the time it takes to rotate the provided angle. A zero value means no movement
+
+Default: 0
+Minimum: 0
+settings#
+Text formatting settings, allowing you to customize the appearance of the text element. These settings are applied as CSS properties to style the text, such as font-size and color. The available settings are determined by the selected style. Refer to the documentation for the specific styles to see which CSS properties can be adjusted.
+
+Type	object
+Required	No
+Default Value	{}
+start#
+The element's start time, in seconds, determines when it begins playing within its container's timeline. This time is relative to the beginning of the scene it's in or, if the element is part of the movie's elements array, relative to the beginning of the movie itself. The default value is 0, meaning the element starts at the beginning of its container's timeline.
+
+Type	number
+Required	No
+Default Value	0
+Format	float
+style#
+The style of the text element, selected from a predefined set of available styles. Each style offers a unique animation. Refer to the linked documentation for a comprehensive overview of available text styles and their corresponding visual characteristics. The default value is "001".
+
+Type	string
+Required	No
+Default Value	"001"
+text#
+The text content to be displayed within the text element. This property accepts a string value that represents the text to be rendered in the video. Note that HTML formatting is not supported; the string will be rendered as plain text.
+
+Type	string
+Required	Yes
+type#
+This field specifies the element's type and must be set to text for text elements.
+
+Type	string
+Required	Yes
+Enum Values	text
+variables#
+Defines local variables specific to this element. These variables can be used to dynamically alter the element's properties or content during the rendering process. Variable names must consist of only letters, numbers, and underscores.
+
+Type	object
+Required	No
+Default Value	{}
+width#
+Sets the width of the element in pixels. The element will be scaled up or down to fit the specified width. A value of -1 instructs the system to maintain the element's original aspect ratio when resizing based on the height property. If 'resize' is set, the 'width' property is ignored. The minimum accepted value is -1.
+
+Type	integer
+Required	No
+Default Value	-1
+Minimum Value	-1
+x#
+The horizontal position of the element within the movie canvas, measured in pixels. This property is only applicable when the position property is set to custom. A value of 0 places the element at the left edge of the movie canvas. Higher integer values move the element to the right.
+
+Type	number
+Required	No
+Default Value	0
+Format	integer
+y#
+Sets the vertical position of the element within the movie canvas, measured in pixels. This property is only applicable when the position property is set to custom. A value of 0 places the element at the top edge of the movie canvas. Higher integer values move the element downwards.
+
+Type	number
+Required	No
+Default Value	0
+Format	integer
+z-index#
+Element's z-index, determining its stacking order within the video. Higher values bring the element to the front, obscuring elements with lower values. Lower values send the element to the back, potentially behind other elements. The value must be an integer between -99 and 99; the default is 0. The natural way of layering elements is by the order of the elements in the elements array. If by any reason this does not work in your case, you can use the z-index property to manually control the stacking order.
+
+Type	number
+Required	No
+Default Value	0
+Format	integer
+Minimum Value	-99
+Maximum Value	99
+zoom#
+Zooms the element by a specified percentage. Use positive values (1-10) to zoom in and negative values (-1 to -10) to zoom out. A value of 0 results in no zoom. Combine with the pan property to control the focal point during zooming.
+
+Type	integer
+Required	No
+Minimum Value	-10
+Maximum Value	10

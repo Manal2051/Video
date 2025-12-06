@@ -1,0 +1,165 @@
+Webhooks#
+Webhooks allow you to receive real-time notifications about the status of your video rendering jobs. Instead of repeatedly polling the API to check if a movie is complete, you can configure a webhook endpoint that JSON2Video will call when the rendering process finishes. This enables you to trigger other actions in your systems, such as updating a database, sending an email, or publishing the video to a platform.
+
+Webhooks are very useful when using the API from no-code platforms like Make.com, N8N or Zapier.
+
+Configuring a Webhook#
+Webhooks are configured using the exports array within the movie object, specifically within a destinations array. The webhook destination object requires two key properties:
+
+type: Set to webhook.
+endpoint: The publicly accessible URL of your webhook endpoint.
+An optional property allows you to specify the content type:
+
+content-type: json (default) or urlencoded.
+Here's an example JSON snippet illustrating webhook configuration:
+
+{
+    "resolution": "full-hd",
+    "quality": "high",
+    "scenes": [],
+    "exports": [
+        {
+            "destinations": [
+                {
+                    "type": "webhook",
+                    "endpoint": "https://yourdomain.com/webhook"
+                }
+            ]
+        }
+    ]
+}
+Copy
+Webhook Request Details#
+When the rendering process is complete (or if the export to other destinations finishes), JSON2Video will send a POST request to your configured endpoint. The request body will contain information about the completed movie, either in JSON or urlencoded format, depending on the content-type you set up.
+
+JSON Payload Example:
+
+{
+    "width": "1920",
+    "height": "1080",
+    "duration": "10.5",
+    "size": "4567890",
+    "url": "https://assets.json2video.com/clients/yourclientid/renders/yourmovie.mp4",
+    "project": "[[your_project_id]]",
+    "id": "[[your_movie_id]]",
+    "client-data": {
+        "my-custom-field": "my-custom-value"
+    }
+}
+Copy
+Payload Properties:
+
+width: The width of the rendered video in pixels.
+height: The height of the rendered video in pixels.
+duration: The duration of the rendered video in seconds.
+size: The size of the rendered video file in bytes.
+url: A publicly accessible URL where the rendered video can be downloaded.
+project: The project ID associated with the rendering job.
+id: The value of the id property from the original movie object, if provided. This allows you to correlate the webhook notification with the specific movie you submitted.
+client-data: An object containing any custom data you provided in the client-data property of the original movie object.
+Dashboard connections#
+For security reasons, it's highly recommended that the endpoint URLs are configured as Connections in the dashboard rather than placing directly the URL in the JSON payload.
+
+Creating a webhook connection
+
+This allows sensitive data (such as API keys or credentials for services you're integrating with) to be securely stored and managed. Instead of the endpoint URL, reference the connection using the connection id property.
+
+See Exports documentation for more details.
+
+Example using connection ID#
+{
+    "resolution": "full-hd",
+    "quality": "high",
+    "scenes": [],
+    "exports": [
+        {
+            "destinations": [
+                {
+                    "id": "your-webhook-connection-id"
+                }
+            ]
+        }
+    ]
+}
+Copy
+In this example, the webhook configuration is defined in a connection with the id your-webhook-connection-id in the dashboard.
+
+Multiple Destinations#
+Webhooks can be used in conjunction with other export destinations. For instance, you can configure JSON2Video to upload the rendered video to an FTP server and then trigger your webhook to notify your system of the successful upload. Destinations are executed sequentially. This provides a powerful way to automate complex workflows.
+
+Example#
+{
+    "resolution": "full-hd",
+    "quality": "high",
+    "scenes": [],
+    "exports": [
+        {
+            "destinations": [
+                {
+                    "id": "your-ftp-connection-id"
+                },
+                {
+                    "type": "webhook",
+                    "endpoint": "https://yourdomain.com/webhook"
+                }
+            ]
+        }
+    ]
+}
+Copy
+In this example, the video is rendered and uploaded to an FTP server first, and then the webhook is triggered to notify your system of the successful upload.
+
+Creating the webhook endpoint#
+You are responsible for creating the webhook endpoint that will receive the POST request from JSON2Video. Your endpoint must be publicly accessible on the internet and have a valid SSL certificate (HTTPS).
+
+You can implement the endpoint using any programming language or framework you choose.
+
+Sample implementations using PHP and Node.js are provided below:
+
+PHP example#
+<?php
+
+// Retrieve JSON payload from the POST request
+$jsonPayload = file_get_contents("php://input");
+
+// Decode JSON data
+$data = json_decode($jsonPayload, true);
+
+// Access video metadata and download URL
+$videoUrl = $data["url"];
+$projectId = $data["project"];
+
+//  Your custom processing logic here
+
+http_response_code(200); // Indicate success
+echo "Webhook received successfully!";
+
+?>
+Copy
+Node.js example#
+This example uses the Express framework to create a simple webhook endpoint.
+
+const express = require('express');
+const bodyParser = require('body-parser');
+const app = express();
+const port = 3000;
+
+app.use(bodyParser.json());
+
+app.post('/webhook', (req, res) => {
+  const videoUrl = req.body.url;
+  const projectId = req.body.project;
+
+  // Your custom processing logic here
+
+  res.status(200).send('Webhook received successfully!');
+});
+
+app.listen(port, () => {
+  console.log(`Webhook endpoint listening on port ${port}`);
+});
+Copy
+Notes#
+Ensure the PHP or Node.js server is publicly accessible and has a valid SSL certificate for secure communication.
+Replace the placeholder logic in the examples with your specific video processing requirements.
+Test your webhook endpoint thoroughly to ensure proper integration with JSON2Video.

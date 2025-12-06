@@ -1,0 +1,118 @@
+Audio#
+Type: object
+
+Defines an audio element to be included in the video. The audio source can be specified using a URL, supporting common audio formats like MP3 and WAV. Control playback behavior by defining the number of times the audio loops and the starting point within the audio using the seek property. You can also control audio properties such as muted and volume.
+
+Properties#
+cache#
+If true, the system will attempt to retrieve and use a previously rendered (cached) version of this element, if an identical version is available. This can significantly reduce processing time. If false, a new render of the element will always be performed, regardless of whether a cached version exists. The default value is true.
+
+Type	boolean
+Required	No
+Default Value	true
+Format	boolean
+comment#
+A field for adding descriptive notes or internal memos related to the element. This comment is for your reference and does not affect the rendering process. It can be used to keep notes about the element like describing the content or the purpose of the element.
+
+Type	string
+Required	No
+condition#
+A string containing an expression that determines whether the element will be rendered. The element is rendered only if the condition evaluates to true. If the condition is false or an empty string, the element will be skipped and not included in the scene or movie.
+
+Type	string
+Required	No
+duration#
+Defines the duration of the element in seconds. Use a positive value to specify the element's length. A value of -1 instructs the system to automatically set the duration based on the intrinsic length of the asset or file used by the element. A value of -2 sets the element's duration to match that of its parent scene (if it's inside a scene) or the movie (if it's in the movie elements array).
+
+Type	number
+Required	No
+Default Value	-1
+Format	float
+extra-time#
+The amount of time, in seconds, to extend the element's duration beyond its natural length. This allows the element to linger on screen after its content has finished playing or displaying. For example, setting extra-time to 0.5 will keep the element visible for an additional half-second.
+
+Type	number
+Required	No
+Default Value	0
+Format	float
+fade-in#
+The duration, in seconds, of the fade-in effect applied to the element's appearance. A value of 0 means no fade-in effect. Larger values result in a longer fade-in duration. The value must be a non-negative number.
+
+Type	number
+Required	No
+Format	float
+Minimum Value	0
+fade-out#
+The duration, in seconds, of the fade-out effect applied to the element's disappearance. A value of 0 means no fade-out effect. Larger values result in a longer fade-out duration. The value must be a non-negative number.
+
+Type	number
+Required	No
+Format	float
+Minimum Value	0
+id#
+A unique identifier for the element within the movie. This string allows you to reference and manage individual elements. If not provided, the system will automatically generate a random string.
+
+Type	string
+Required	No
+Default Value	"@randomString"
+loop#
+Specifies the number of times the audio will play. The default value of 1 means the audio plays once and then stops. A value of -1 indicates the audio should loop indefinitely. If loop is set, the duration property must be adjusted to match the looped audio length. For infinite loops, set duration to -2 to extend the duration of the audio element to match the element container (being either the parent scene or the movie).
+
+Type	integer
+Required	No
+Minimum Value	-1
+muted#
+If true, the audio track of the element (e.g., a video or audio file) will be muted, effectively silencing it. If false or omitted, the audio will play according to its original volume or the volume setting.
+
+Type	boolean
+Required	No
+Default Value	false
+seek#
+Specifies the time, in seconds, at which the audio file should fast forward to. Positive values seek forward from the beginning, while negative values seek backward from the end. By default, the playback starts at the beginning (0 seconds).
+
+Type	number
+Required	No
+Default Value	0
+Format	float
+src#
+The URL to the audio asset file. This should be a publicly accessible URL pointing to the audio file, which can be in MP3, WAV, or any other common audio format.
+
+Type	string
+Required	No
+Format	uri
+start#
+The element's start time, in seconds, determines when it begins playing within its container's timeline. This time is relative to the beginning of the scene it's in or, if the element is part of the movie's elements array, relative to the beginning of the movie itself. The default value is 0, meaning the element starts at the beginning of its container's timeline.
+
+Type	number
+Required	No
+Default Value	0
+Format	float
+type#
+This field specifies the element's type and must be set to audio for audio elements.
+
+Type	string
+Required	No
+Enum Values	audio
+variables#
+Defines local variables specific to this element. These variables can be used to dynamically alter the element's properties or content during the rendering process. Variable names must consist of only letters, numbers, and underscores.
+
+Type	object
+Required	No
+Default Value	{}
+volume#
+Controls the volume gain of the audio track (e.g., a video or audio file). This is a multiplier applied to the original audio level. A value of 1 represents the original volume (no gain), values greater than 1 increase the volume, and values less than 1 decrease the volume. The acceptable range is from 0 to 10. For background music with voiceovers, a usual value is 0.2. Increasing the volume of the audio track can reduce the quality of the audio.
+
+Type	number
+Required	No
+Default Value	1
+Minimum Value	0
+Maximum Value	10
+z-index#
+Element's z-index, determining its stacking order within the video. Higher values bring the element to the front, obscuring elements with lower values. Lower values send the element to the back, potentially behind other elements. The value must be an integer between -99 and 99; the default is 0. The natural way of layering elements is by the order of the elements in the elements array. If by any reason this does not work in your case, you can use the z-index property to manually control the stacking order.
+
+Type	number
+Required	No
+Default Value	0
+Format	integer
+Minimum Value	-99
+Maximum Value	99

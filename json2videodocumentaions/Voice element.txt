@@ -1,0 +1,208 @@
+Voice element#
+Type: object
+
+Creates a voiceover element by converting the provided text into synthesized speech. The text to be spoken is specified using the text property. The voice property determines the voice to use, and the model property allows specifying which speech synthesis model to employ. Optionally, a connection ID can be provided to utilize your own API key for voice generation, otherwise the JSON2Video API keys will be used.
+
+Working with the Voice element#
+The Voice element uses AI models to generate a voiceover for your video.
+
+You can choose from the following models:
+
+Microsoft Azure (azure): The Azure model is a powerful and flexible option that supports a wide range of voices and languages. It offers high-quality speech synthesis with customizable parameters like support for SSML (Speech Synthesis Markup Language) for advanced text-to-speech control.
+ElevenLabs (elevenlabs): The ElevenLabs model is a popular choice for its high quality of its voices and the variety of voices available.
+ElevenLabs Flash V2.5 (elevenlabs-flash-v2-5): The ElevenLabs Flash V2.5 model is a fast and efficient option that provides high-quality speech synthesis with extended language support.
+Note The azure model is the default model and will be used if no model is specified.
+
+Example
+
+This example creates a voiceover for a video using the Azure model.
+
+{
+  "resolution": "full-hd",
+  "scenes": [
+    {
+      "elements": [
+        {
+          "type": "voice",
+          "text": "Hello, world!",
+          "voice": "en-US-EmmaMultilingualNeural",
+          "model": "azure"
+        }
+      ]
+    }
+  ]
+}
+Copy
+Voice generation costs#
+Generating a voiceover with AI is expensive and depending on the model you choose, it can consume a significant amount of credits.
+
+Model	Credits per minute
+Azure	0 credits per minute
+ElevenLabs	60 credits per minute
+ElevenLabs Flash V2.5	60 credits per minute
+Azure model cost is included in all JSON2Video plans and do not consume any credits.
+
+Voiceovers generated with AI models are cached in JSON2Video servers to avoid calling the AI models for the same voiceover multiple times. This means that if you call the JSON2Video API with the same parameters for the same voiceover again, the same cached voiceover will be used in the video, avoiding unnecessary costs. But if for any reason you need to regenerate a voiceover, you can do it by setting the cache property to false.
+
+Using your own API key#
+If you already have an ElevenLabs or Azure API account, you can use your API key to generate your voiceovers. This is specially useful for ElevenLabs custom voices.
+
+To use your own API key:
+
+You need to create a connection in the Connections page.
+You need to provide the connection ID to the connection property in the Voice element.
+Example
+
+This example creates a voiceover for a video using the ElevenLabs model and your own API key.
+
+{
+  "resolution": "full-hd",
+  "scenes": [
+    {
+      "elements": [
+        {
+          "type": "voice",
+          "text": "Hello, world!",
+          "model": "elevenlabs",
+          "voice": "Daniel",
+          "connection": "my-connection-id"
+        }
+      ]
+    }
+  ]
+}
+Copy
+Choosing the right voice#
+Finding the right voice for your project can be a challenge.
+
+Azure voices#
+Azure voices have this format: en-US-EmmaMultilingualNeural.
+
+The first part is the language code (2 digits), the second part is the country code (2 digits) and the third part is the name of the voice.
+
+For the Azure model, you can check the full list of voices by language here: https://json2video.com/ai-voices/azure/languages/
+
+ElevenLabs voices#
+ElevenLabs voices have natural names like Daniel, Serena, Antoni, Bella, Nova, Shimmer and more. You can also use the ElevenLabs's voiceID to specify the voice you want to use.
+
+You can find a list of voices in the ElevenLabs Voices Library page (you need to be logged in).
+
+Properties#
+The following properties are required:
+
+text
+type
+cache#
+If true, the system will attempt to retrieve and use a previously rendered (cached) version of this element, if an identical version is available. This can significantly reduce processing time. If false, a new render of the element will always be performed, regardless of whether a cached version exists. The default value is true.
+
+Type	boolean
+Required	No
+Default Value	true
+Format	boolean
+comment#
+A field for adding descriptive notes or internal memos related to the element. This comment is for your reference and does not affect the rendering process. It can be used to keep notes about the element like describing the content or the purpose of the element.
+
+Type	string
+Required	No
+condition#
+A string containing an expression that determines whether the element will be rendered. The element is rendered only if the condition evaluates to true. If the condition is false or an empty string, the element will be skipped and not included in the scene or movie.
+
+Type	string
+Required	No
+connection#
+The ID of your pre-configured connection to use for voice generation. Connections are defined within the application's dashboard. By specifying a connection ID, you can leverage the API key associated with that connection, enabling you to use your own account with the AI model provider for voice generation. If a connection ID is not provided, the default JSON2Video API keys will be used, potentially deducting credits for the API calls.
+
+Type	string
+Required	No
+duration#
+Defines the duration of the element in seconds. Use a positive value to specify the element's length. A value of -1 instructs the system to automatically set the duration based on the intrinsic length of the asset or file used by the element. A value of -2 sets the element's duration to match that of its parent scene (if it's inside a scene) or the movie (if it's in the movie elements array).
+
+Type	number
+Required	No
+Default Value	-1
+Format	float
+extra-time#
+The amount of time, in seconds, to extend the element's duration beyond its natural length. This allows the element to linger on screen after its content has finished playing or displaying. For example, setting extra-time to 0.5 will keep the element visible for an additional half-second.
+
+Type	number
+Required	No
+Default Value	0
+Format	float
+fade-in#
+The duration, in seconds, of the fade-in effect applied to the element's appearance. A value of 0 means no fade-in effect. Larger values result in a longer fade-in duration. The value must be a non-negative number.
+
+Type	number
+Required	No
+Format	float
+Minimum Value	0
+fade-out#
+The duration, in seconds, of the fade-out effect applied to the element's disappearance. A value of 0 means no fade-out effect. Larger values result in a longer fade-out duration. The value must be a non-negative number.
+
+Type	number
+Required	No
+Format	float
+Minimum Value	0
+id#
+A unique identifier for the element within the movie. This string allows you to reference and manage individual elements. If not provided, the system will automatically generate a random string.
+
+Type	string
+Required	No
+Default Value	"@randomString"
+model#
+The generative AI model to use for synthesizing the voice. Be aware that some models may consume credits for each request.
+
+Type	string
+Required	No
+Enum Values	azure, elevenlabs, elevenlabs-flash-v2-5
+muted#
+If true, the audio track of the element (e.g., a video or audio file) will be muted, effectively silencing it. If false or omitted, the audio will play according to its original volume or the volume setting.
+
+Type	boolean
+Required	No
+Default Value	false
+start#
+The element's start time, in seconds, determines when it begins playing within its container's timeline. This time is relative to the beginning of the scene it's in or, if the element is part of the movie's elements array, relative to the beginning of the movie itself. The default value is 0, meaning the element starts at the beginning of its container's timeline.
+
+Type	number
+Required	No
+Default Value	0
+Format	float
+text#
+The text content to be synthesized into speech.
+
+Type	string
+Required	Yes
+type#
+This field specifies the element's type and must be set to voice for voiceover elements.
+
+Type	string
+Required	Yes
+Enum Values	voice
+variables#
+Defines local variables specific to this element. These variables can be used to dynamically alter the element's properties or content during the rendering process. Variable names must consist of only letters, numbers, and underscores.
+
+Type	object
+Required	No
+Default Value	{}
+voice#
+The name of the voice to be used for text-to-speech synthesis. This value determines which AI voice will be used to generate the audio. Refer to the available voices documentation to explore the supported options.
+
+Type	string
+Required	No
+volume#
+Controls the volume gain of the audio track (e.g., a video or audio file). This is a multiplier applied to the original audio level. A value of 1 represents the original volume (no gain), values greater than 1 increase the volume, and values less than 1 decrease the volume. The acceptable range is from 0 to 10. For background music with voiceovers, a usual value is 0.2. Increasing the volume of the audio track can reduce the quality of the audio.
+
+Type	number
+Required	No
+Default Value	1
+Minimum Value	0
+Maximum Value	10
+z-index#
+Element's z-index, determining its stacking order within the video. Higher values bring the element to the front, obscuring elements with lower values. Lower values send the element to the back, potentially behind other elements. The value must be an integer between -99 and 99; the default is 0. The natural way of layering elements is by the order of the elements in the elements array. If by any reason this does not work in your case, you can use the z-index property to manually control the stacking order.
+
+Type	number
+Required	No
+Default Value	0
+Format	integer
+Minimum Value	-99
+Maximum Value	99

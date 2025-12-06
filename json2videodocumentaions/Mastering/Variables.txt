@@ -1,0 +1,111 @@
+Variables#
+Variables are a powerful feature in JSON2Video that allows you to dynamically inject data into your movie scripts. They act as placeholders for values that can be changed without modifying the core structure of your JSON. This makes your templates more reusable and adaptable to different scenarios.
+
+Key Benefits of Using Variables#
+Reusability: Create a single template and use it for multiple videos with varying content.
+Maintainability: Update values in one place (the variables object) instead of scattered throughout the JSON.
+Dynamic Content: Integrate with external data sources (e.g., APIs, databases) to populate your videos with real-time information.
+How Variables Work#
+Variables are defined in the variables object at the root level of your movie or scene JSON. This object contains key-value pairs, where the key is the variable name and the value is the data you want to inject.
+
+Steps:
+
+Define Variables: Create a variables object at the root level of your movie or scene JSON.
+
+Use Variables: Reference variables within your JSON using double curly braces: {{variable_name}}. These placeholders will be replaced with their corresponding values during the rendering process.
+
+Example:
+
+{
+  "resolution": "full-hd",
+  "variables": {
+    "title": "Summer Sale!",
+    "discount_percentage": 20,
+    "background_color": "#f0f0f0"
+  },
+  "scenes": [
+    {
+      "background-color": "{{background_color}}",
+      "elements": [
+        {
+          "type": "text",
+          "text": "{{title}}",
+          "style": "001"
+        },
+        {
+          "type": "text",
+          "text": "Save {{discount_percentage}}%!",
+          "style": "002",
+          "start": 3
+        }
+      ]
+    }
+  ]
+}
+Copy
+In this example:
+
+title, discount_percentage, and background_color are defined as variables.
+{{title}} is used to display the sale title.
+{{discount_percentage}} is used to display the discount amount.
+{{background_color}} is used to define the background color of the scene.
+Data Types:
+
+Variables can hold the following data types:
+
+string: Textual data (e.g., "Hello world", "Image URL").
+number: Numerical data (e.g., 10, 3.14).
+boolean: True/False values (e.g., true, false).
+array: A collection of values (e.g., ["value1", "value2"]). Note: Arrays used with the iterate property can enable variable number of scenes.
+object: A nested JSON structure (e.g., {"key": "value"}).
+Scope:
+
+Movie-Level Variables: Defined at the root of the movie object. These are accessible throughout the entire movie.
+Scene-Level Variables: Defined within a scene object. These are only accessible within that specific scene. Scene-level variables override movie-level variables with the same name.
+Variable Naming Conventions:
+
+Variable names must start with a letter (a-z, A-Z).
+They can contain letters, numbers (0-9), and underscores (_).
+Spaces and special characters are not allowed.
+Example of Overriding Movie-Level Variables with Scene-Level Variables:
+
+{
+    "variables": {
+        "font_color": "#FFFFFF"
+    },
+    "scenes":[
+        {
+            "variables": {
+                "font_color": "#000000"
+            },
+            "elements":[
+                {
+                    "type": "text",
+                    "text": "Scene 1",
+                    "settings": {
+                        "color": "{{font_color}}" // Will be #000000
+                    }
+                }
+            ]
+        },
+         {
+            "elements":[
+                {
+                    "type": "text",
+                    "text": "Scene 2",
+                    "settings": {
+                        "color": "{{font_color}}" // Will be #FFFFFF
+                    }
+                }
+            ]
+        }
+    ]
+}
+Copy
+In scene 1, the font_color is defined at scene level and has precedence over the font_color defined at movie level. In scene 2, there is no definition of font_color at scene level, so the font_color defined at movie level is used.
+
+Important Considerations:
+
+Security: Avoid storing sensitive information (API keys, passwords) directly in variables.
+Data Validation: Implement validation on your data sources to ensure variable values are compatible with the expected data types.
+Performance: Excessive use of variables and complex expressions may impact rendering performance. Test thoroughly.

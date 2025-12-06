@@ -1,0 +1,31 @@
+# General
+.git
+.gitignore
+.github
+.vscode
+*.user
+*.suo
+*.swp
+*.tmp
+*.log
+
+# .NET build artifacts
+**/bin/
+**/obj/
+**/out/
+**/publish/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Docker
+Dockerfile*
+!.dockerignore
+
+# Node (if any front-end appears later)
+node_modules/
+
+# IDEs
+.idea/
+*.iml

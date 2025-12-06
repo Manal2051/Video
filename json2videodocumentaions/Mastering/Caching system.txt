@@ -1,0 +1,26 @@
+Caching system#
+JSON2Video is designed to optimize video rendering as much as possible and reduce waiting time. To achieve this, it utilizes a caching system to avoid redundant operations such as:
+
+Repeatedly downloading the same files.
+Re-rendering templates or scenes that haven't changed.
+The system intelligently detects changes and rebuilds scenes or movies accordingly. However, you can manually control caching behavior using the cache property.
+
+Controlling Cache Behavior#
+The cache property can be applied to:
+
+Movies: Force a complete re-render of the entire movie.
+Scenes: Force a re-render of a specific scene.
+Elements: Force a re-render or re-download of a specific element.
+To better understand how the caching system works, let's see a few cases:
+
+Forcing a re-render of the scene does not force the re-render or re-download of the elements in that scene, it only rebuilds the scene using the cached elements.
+Forcing a re-render of an element inside a scene automatically triggers a re-render of the scene, but the other elements in the scene may still be cached.
+Using the cache property#
+Set the cache property to false to force a fresh render, bypassing the cache. Setting it to true (or omitting the property) enables the system to use a cached version if available.
+
+Example: Forcing a Re-render of an Element
+
+{
+    "type": "[[ELEMENT_TYPE]]",
+    "cache": false
+}

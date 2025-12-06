@@ -1,0 +1,155 @@
+Duration and timing#
+Duration and timing are key aspects of creating dynamic videos with the JSON2Video API. Understanding how these properties interact is essential for controlling the flow and pacing of your video content.
+
+Understanding movie, scene and element duration#
+Movie duration#
+The movie duration cannot be set directly. Instead, it's dynamically calculated by the API based on the length of the scenes and elements it contains. The movie's final duration will be long enough to accommodate all scenes and any elements placed directly within the Movie elements array.
+
+Scene duration#
+The scene duration, on the other hand, can be either explicitly set or automatically calculated. When the duration property of a scene is set to a specific value (in seconds), the scene will last for that exact duration. If duration is set to -1, the API will calculate the scene's duration based on the elements it contains.
+
+Element duration#
+Elements can be placed either inside scenes or directly within the Movie elements array. The location of an element determines its container: if the element is inside a scene, the scene is its container. If the element is in the Movie elements array, the Movie itself is its container. This distinction is important for understanding how the start and duration properties are interpreted.
+
+Each element has three key properties that control its timing:
+
+duration: Sets the length of time the element is visible or audible.
+Use a positive value in duration to specify the element's length.
+A value of -1 instructs the system to automatically set the duration based on the intrinsic length of the asset file.
+A value of -2 sets the element's duration to match that of its parent scene (if it's inside a scene) or the movie (if it's in the movie elements array).
+start: Sets the starting point of the element, relative to the beginning of its container (either the scene or the movie).
+Use a positive value in start to set the element's starting point relative to the beginning of its container.
+A value of -1 instructs the system to move the element at the end of the container's timeline.
+extra-time: Adds additional time after the element's duration ends, extending its visibility or audibility.
+Examples#
+Example 1: Scene with a 10-second video element#
+{
+    "scenes": [
+        {
+            "elements": [
+                {
+                    "type": "video",
+                    "src": "https://example.com/video.mp4",
+                    "duration": 10
+                }
+            ]
+        }
+    ]
+}
+Copy
+In this case, the scene will be 10 seconds long because the video element's duration is 10 seconds and the scene's duration defaults to automatically adjusting to fit its elements. The movie will also be 10 seconds long since it only contains this one scene.
+
+Example 2: Scene with a 10-second video element, scene duration set to 5 seconds#
+{
+    "scenes": [
+        {
+            "duration": 5,
+            "elements": [
+                {
+                    "type": "video",
+                    "src": "https://example.com/video.mp4",
+                    "duration": 10
+                }
+            ]
+        }
+    ]
+}
+Copy
+Here, the scene's duration is explicitly set to 5 seconds, which will override the video element's duration. The scene will be trimmed to 5 seconds, and the video will only play for the first 5 seconds. The movie will also be 5 seconds long.
+
+Example 3: Scene with a 10-second video element and a 20-second audio element#
+{
+    "scenes": [
+        {
+            "elements": [
+                {
+                    "type": "video",
+                    "src": "https://example.com/video.mp4",
+                    "duration": 10
+                },
+                {
+                    "type": "audio",
+                    "src": "https://example.com/audio.mp3",
+                    "duration": 20
+                }
+            ]
+        }
+    ]
+}
+Copy
+In this example, the scene's duration will be automatically calculated to be 20 seconds long, accommodating both the 10-second video and the 20-second audio. The movie will also be 20 seconds long.
+
+Example 4: Scene with a 10-second video element and a 20-second audio element with the audio duration set to -2#
+{
+    "scenes": [
+        {
+            "elements": [
+                {
+                    "type": "video",
+                    "src": "https://example.com/video.mp4",
+                    "duration": 10
+                },
+                {
+                    "type": "audio",
+                    "src": "https://example.com/audio.mp3",
+                    "duration": -2
+                }
+            ]
+        }
+    ]
+}
+Copy
+In this scenario, the audio duration is set to -2, causing it to match the duration of its container (the scene). The API will first calculate the duration of the scene to accommodate the 10 second video element. Therefore, both the scene and audio will be 10 seconds long, and the audio will be trimmed to match the scene duration. The movie will also be 10 seconds long.
+
+Looping videos or audios#
+The loop property controls how many times a video or an audio element will repeat.
+
+When loop is set to a positive integer (e.g., loop: 2), the video will play that number of times.
+
+When loop is set to -1, the video will loop indefinitely (play forever).
+
+If the element is looping, you must extend the duration of the element to accommodate the loop.
+
+In case the element is looping forever, the duration property must be set to -2 to extend the playback to the end of the container (either the parent scene or the movie). Not setting duration to -2 may result in the video or audio only playing once.
+
+Examples#
+Example 1: Video element that loops forever in a scene with a duration of 30 seconds#
+{
+    "scenes": [
+        {
+            "duration": 30,
+            "elements": [
+                {
+                    "type": "video",
+                    "src": "https://example.com/video.mp4",
+                    "loop": -1,
+                    "duration": -2
+                }
+            ]
+        }
+    ]
+}
+Copy
+The video element is looping forever and its duration is set to match the container, but the scene has an explicit duration of 30 seconds. Therefore the video element will loop forever for the first 30 seconds. The movie will be 30 seconds long, matching the scene duration.
+
+Example 2: Video element that loops forever while an audio element plays#
+{
+    "scenes": [
+        {
+            "elements": [
+                {
+                    "type": "video",
+                    "src": "https://example.com/video.mp4",
+                    "loop": -1,
+                    "duration": -2
+                },
+                {
+                    "type": "audio",
+                    "src": "https://example.com/audio.mp3"
+                }
+            ]
+        }
+    ]
+}
+Copy
+The video element is looping forever and its duration is set to match the container. The scene duration will be calculated to accommodate the length of the audio element (whatever it is). Therefore the video element will loop forever for the duration of the audio. The movie will be as long as the scene, that indeed will be as long as the audio.

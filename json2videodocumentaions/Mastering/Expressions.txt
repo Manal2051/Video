@@ -1,0 +1,88 @@
+Expressions#
+Expressions allow you to perform calculations and conditional logic directly within your JSON2Video templates. They are enclosed in double curly braces {{ and }} and evaluated during the video rendering process, enabling dynamic customization of your videos.
+
+Syntax#
+Expressions must be enclosed in double curly braces: {{ expression }}.
+
+Use Cases#
+Expressions can be used in various places within a movie template to dynamically set values, including:
+
+Element durations
+Text content
+Conditional rendering of elements or scenes
+CSS properties within components
+Supported Operators and Functions#
+JSON2Video supports the following operators and functions within expressions:
+
+Arithmetic Operators: + (addition), - (subtraction), * (multiplication), / (division)
+Comparison Operators: == (equal to), != (not equal to), > (greater than), < (less than), >= (greater than or equal to), <= (less than or equal to)
+Logical Operators: and (logical AND), or (logical OR)
+Ternary Operator: condition ? value_if_true : value_if_false
+Math Functions: min(a, b) (returns the minimum of a and b), max(a, b) (returns the maximum of a and b)
+Examples#
+Here are some practical examples of how to use expressions:
+
+Dynamic Element Duration#
+{
+  "variables": {
+    "base_duration": 5
+  },
+  "scenes": [
+    {
+      "elements": [
+        {
+          "type": "text",
+          "text": "Dynamic Duration",
+          "duration": "{{ base_duration + 2 }}" // Duration will be 7 seconds
+        }
+      ]
+    }
+  ]
+}
+Copy
+In this example, the duration of the text element is dynamically calculated by adding 2 seconds to the value of the base_duration variable.
+
+Conditional Text Content#
+{
+  "variables": {
+    "show_alternate_text": true,
+    "primary_text": "Hello",
+    "secondary_text": "Goodbye"
+  },
+  "scenes": [
+    {
+      "elements": [
+        {
+          "type": "text",
+          "text": "{{ show_alternate_text ? secondary_text : primary_text }}"
+          //If show_alternate_text is true, the text will be "Goodbye". Otherwise, it will be "Hello".
+        }
+      ]
+    }
+  ]
+}
+Copy
+This example uses the ternary operator to dynamically set the text content based on the boolean value of the show_alternate_text variable.
+
+Setting a Component's width#
+{
+  "comment": "Variables example",
+  "resolution": "full-hd",
+  "variables": {
+      "base_width": 100,
+      "scaling_factor": 0.5
+  },
+  "scenes": [
+    {
+      "elements": [
+        {
+          "type": "component",
+          "component": "basic/000",
+          "width": "{{ base_width * scaling_factor }}"
+        }
+      ]
+    }
+  ]
+}
+Copy
+In this example, the width of the component is dynamically calculated by multiplying the value of the base_width variable by the value of the scaling_factor variable.

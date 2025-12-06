@@ -1,0 +1,1614 @@
+API server
+The API base path is:
+
+https://api.json2video.com/v2
+Authentication
+Add a x-api-key header to your POST and GET request with your API Key as value:
+
+x-api-key: <Your API KEY>
+Endpoints
+Get the status of your movies
+Get the status any of your movies by passing your project ID in the project query parameter. You can get your project ID from the response of the POST request.
+Request
+GEThttps://api.json2video.com/v2/movies
+
+Create a new movie
+Submit a new movie rendering job.
+Request
+POSThttps://api.json2video.com/v2/movies
+
+bodyobjectrequiredapplication/json
+Instance of Movie
+Schemas
+Movie schema
+Object defining the movie to be rendered
+cacheboolean
+Use the cached version of the movie if its available
+default:true
+client-dataobject
+Key-value pairs that will be included in the response of the GET requests and in the webhook payloads. Client data is intended to pass on information to the following steps of the workflow.
+default:{}
+commentstring
+Used for adding your comments
+draftboolean
+Set to true to add a watermark to the movie. Free plans are not allowed to set draft to false
+allowed values:
+true
+false
+default:true
+elementsarray of any of these schemas: Video, Image, Text, HTML, Component, Template, Audio, Voice, Audiogram, Subtitles
+exportsarray of this object:
+You can define different types of exports for your movie. Check the documentation for more information
+heightinteger
+Height of the movie. Only applicable if resolution is set to custom
+default:360
+minimum value:>=50
+maximum value:<=3840
+example value:360
+idstring
+Movie ID string. It must be unique per project
+default:@randomString
+qualitystring
+Quality of the final rendered movie. Use it for speeding up the rendering process. low is the lowest quality, high is the highest quality
+allowed values:
+low
+medium
+high
+default:high
+resolutionstring
+Set the movie size based on common use cases. Use custom to set a custom size with the width and height properties
+allowed values:
+sd
+hd
+full-hd
+squared
+instagram-story
+instagram-feed
+twitter-landscape
+twitter-portrait
+custom
+default:custom
+scenesarray of Scenerequired
+variablesobject
+Variables of the template. Variable names can only contain letters, numbers and underscores
+default:{}
+example value:{ "myVariable": "myValue", "myOtherVariable": true, "myThirdVariable": 123 }
+widthinteger
+Width of the movie. Only applicable if resolution is set to custom
+default:640
+minimum value:>=50
+maximum value:<=3840
+example value:640
+Example of movie schema
+
+{
+    "comment": "MyProject",
+    "resolution": "full-hd",
+    "scenes": [
+        {
+            "elements": [
+                {
+                    "type": "video",
+                    "src": "https://example.com/path/to/my/video.mp4"
+                }
+            ]
+        }
+    ]
+}
+Scene schema
+background-colorstring
+A hexadecimal representation of a color or 'transparent'
+default:#000000
+example value:#FF0000
+cacheboolean
+Use the cached version of the scene if its available
+default:true
+commentstring
+Used for adding your comments
+conditionstring
+OPTIONAL. Condition to be met for the scene to be rendered. If the value is false or empty string, the scene is removed from the movie
+durationnumberfloat
+Sets the scene duration in seconds. A value of -1 means that the scene lasts enough to contain all its elements
+default:-1
+elementsarray of any of these schemas: Video, Image, Text, HTML, Component, Audio, Voice, Audiogram, Subtitles
+idstring
+ID of the scene
+default:@randomString
+variablesobject
+Local variables of the scene. Variable names can only contain letters, numbers and underscores
+default:{}
+example value:{ "myVariable": "myValue", "myOtherVariable": true, "myThirdVariable": 123 }
+Video schema
+cachebooleanboolean
+Use the cached version of the element if its available
+default:true
+example value:false
+chroma-keyobject
+Allows to define a color (or a range of colors) that will be converted to transparent
+colorstringrequired
+Set the color for which alpha will be set to 0 (full transparency)
+example value:#00b140
+toleranceinteger
+Makes the selection more or less sensitive to changes in color. A value of 1 will select only the provided color. A value of 100 will select all colors, so the full canvas
+default:25
+minimum value:>=1
+maximum value:<=100
+commentstring
+Used for adding your comments
+conditionstring
+OPTIONAL. Condition to be met for the element to be rendered. If the value is false or empty string, the element is removed from the scene
+correctionobject
+Allows to adjust the contrast, brightness, saturation and gamma of the element
+blurnumber
+Apply gaussian blur. A value of 0 means no blur. A value of 10 means maximum blur.
+default:0
+minimum value:>=0
+maximum value:<=50
+brightnessnumber
+Adjust the brightness
+default:0
+minimum value:>=-1
+maximum value:<=1
+contrastnumber
+Adjust the contrast
+default:1
+minimum value:>=-1000
+maximum value:<=1000
+gammanumber
+Adjust the gamma
+default:1
+minimum value:>=0.1
+maximum value:<=10
+saturationnumber
+Adjust the saturation
+default:1
+minimum value:>=0
+maximum value:<=3
+cropobject
+Crops the element
+heightintegerrequired
+Sets the height of the croping
+widthintegerrequired
+Sets the width of the croping
+xinteger
+Sets the left point of croping
+default:0
+yinteger
+Sets the top point of croping
+default:0
+durationnumberfloat
+Element's duration in seconds. A value of -1 auto calculates the duration based on the asset/file intrinsic length. A value of -2 sets the element duration to the parent scene or element duration
+default:-1
+example value:7.3
+extra-timenumberfloat
+Element's time span added after the playback.
+default:0
+example value:0.5
+fade-innumberfloat
+Adds a fade in effect to the element. Value in seconds.
+minimum value:>=0
+fade-outnumberfloat
+Adds a fade out effect to the element. Value in seconds.
+minimum value:>=0
+flip-horizontalboolean
+Flips the element horizontally
+default:false
+flip-verticalboolean
+Flips the element vertically
+default:false
+heightinteger
+Sets the height of the element, scaling up or down if required. A value of '-1' means to keep the aspect ratio
+default:-1
+minimum value:>=-1
+idstring
+ID of the element
+default:@randomString
+loopinteger
+Sets the number of loops the video to play. Use -1 for an infinite loop. The default value of 1 plays the video just once.
+minimum value:>=-1
+example value:-1
+maskobject
+A predefined mask name or a URL to a PNG or video file defining a mask for the element. For external mask files, black color is transparent, white is solid, and gray tones in between are partially transparent. Predefined masks names are: 'circle'.
+seeknumberfloat
+Seek to the specified time in seconds relative to the begining of the asset. Use negative values to seek backwards
+default:0
+srcstring
+URL to the mask file
+mutedboolean
+Mutes the audio
+default:false
+panstring
+Pans the element to the specified direction. If zoom property is not specified, the effect is a non-zooming pan
+allowed values:
+left
+top
+right
+bottom
+top-left
+top-right
+bottom-left
+bottom-right
+pan-cropboolean
+Enable or disable the crop effect when panning
+default:true
+pan-distancenumberfloat
+Is the distance of the panning effect. A higher value means a larger panning movement (higher speed)
+default:0.1
+minimum value:>=0.01
+maximum value:<=0.5
+positionstring
+Sets the element position in the scene. A value of 'custom' sets a custom position based on the provided 'x' and 'y' properties
+allowed values:
+top-left
+top-right
+bottom-right
+bottom-left
+center-center
+custom
+default:custom
+resizestring
+Sets the resize mode of the element. A value of 'cover' or 'fill' stretches the element to cover the entire movie canvas. A value of 'fit' or 'contain' stretches the element to fit the movie canvas. If set, the 'width' and 'height' properties are ignored
+allowed values:
+cover
+fill
+fit
+contain
+rotateobject
+anglenumberrequired
+Sets the angle of rotation
+default:0
+minimum value:>=-360
+maximum value:<=360
+speednumber
+Sets the time it takes to rotate the provided angle. A zero value means no movement
+default:0
+minimum value:>=0
+scaleobject
+This property is deprecated. Use 'width' and 'height' instead
+heightinteger
+Sets the height for scaling the element
+default:-1
+minimum value:>=-1
+widthinteger
+Sets the width for scaling the element
+default:-1
+minimum value:>=-1
+seeknumberfloat
+Seek to the specified time in seconds relative to the begining of the asset. Use negative values to seek backwards
+default:0
+srcstringuri
+URL to the asset file. Videos can be in MP4, MKV, MOV but MP4 is recommended.
+startnumberfloat
+Element's starting time in seconds relative to the container scene or the movie if the element is in the Movie's elements array.
+default:0
+typestringrequired
+allowed values:
+video
+variablesobject
+Local variables of the element. Variable names can only contain letters, numbers and underscores
+default:{}
+example value:{ "myVariable": "myValue", "myOtherVariable": true, "myThirdVariable": 123 }
+volumenumber
+Volume gain of the audio. A value of 1 means no gain. Higher values increase the volume. Values lower than 1 decrease the volume
+default:1
+minimum value:>=0
+maximum value:<=10
+widthinteger
+Sets the width of the element, scaling up or down if required. A value of '-1' means to keep the aspect ratio
+default:-1
+minimum value:>=-1
+xnumberinteger
+Sets the horizontal position of the element in the scene. The value 0 is on the left side
+default:0
+ynumberinteger
+Sets the vertical position of the element in the scene. The value 0 is on the top side
+default:0
+z-indexnumberinteger
+Element's z-index. Use this property to reorganize the layering of the elements like in HTML
+default:0
+minimum value:>=-99
+maximum value:<=99
+example value:3
+zoominteger
+Zooms the element with the specified level percentage. Positive values zoom in, negative values zoom out, zero does not zoom. Zoom can be combined with the pan property to set the focus point of the zooming
+minimum value:>=-10
+maximum value:<=10
+Image schema
+aspect-ratiostring
+Aspect ratio of the generated image
+allowed values:
+horizontal
+vertical
+squared
+default:horizontal
+cachebooleanboolean
+Use the cached version of the element if its available
+default:true
+example value:false
+chroma-keyobject
+Allows to define a color (or a range of colors) that will be converted to transparent
+colorstringrequired
+Set the color for which alpha will be set to 0 (full transparency)
+example value:#00b140
+toleranceinteger
+Makes the selection more or less sensitive to changes in color. A value of 1 will select only the provided color. A value of 100 will select all colors, so the full canvas
+default:25
+minimum value:>=1
+maximum value:<=100
+commentstring
+Used for adding your comments
+conditionstring
+OPTIONAL. Condition to be met for the element to be rendered. If the value is false or empty string, the element is removed from the scene
+connectionstring
+Connection ID to use for generation. If specified, the API Key in the connection will be used. If not specified, the default API Key will be used and credits may be deducted
+correctionobject
+Allows to adjust the contrast, brightness, saturation and gamma of the element
+blurnumber
+Apply gaussian blur. A value of 0 means no blur. A value of 10 means maximum blur.
+default:0
+minimum value:>=0
+maximum value:<=50
+brightnessnumber
+Adjust the brightness
+default:0
+minimum value:>=-1
+maximum value:<=1
+contrastnumber
+Adjust the contrast
+default:1
+minimum value:>=-1000
+maximum value:<=1000
+gammanumber
+Adjust the gamma
+default:1
+minimum value:>=0.1
+maximum value:<=10
+saturationnumber
+Adjust the saturation
+default:1
+minimum value:>=0
+maximum value:<=3
+cropobject
+Crops the element
+heightintegerrequired
+Sets the height of the croping
+widthintegerrequired
+Sets the width of the croping
+xinteger
+Sets the left point of croping
+default:0
+yinteger
+Sets the top point of croping
+default:0
+durationnumberfloat
+Element's duration in seconds. A value of -1 auto calculates the duration based on the asset/file intrinsic length. A value of -2 sets the element duration to the parent scene or element duration
+default:-1
+example value:7.3
+extra-timenumberfloat
+Element's time span added after the playback.
+default:0
+example value:0.5
+fade-innumberfloat
+Adds a fade in effect to the element. Value in seconds.
+minimum value:>=0
+fade-outnumberfloat
+Adds a fade out effect to the element. Value in seconds.
+minimum value:>=0
+flip-horizontalboolean
+Flips the element horizontally
+default:false
+flip-verticalboolean
+Flips the element vertically
+default:false
+heightinteger
+Sets the height of the element, scaling up or down if required. A value of '-1' means to keep the aspect ratio
+default:-1
+minimum value:>=-1
+idstring
+ID of the element
+default:@randomString
+maskobject
+A predefined mask name or a URL to a PNG or video file defining a mask for the element. For external mask files, black color is transparent, white is solid, and gray tones in between are partially transparent. Predefined masks names are: 'circle'.
+seeknumberfloat
+Seek to the specified time in seconds relative to the begining of the asset. Use negative values to seek backwards
+default:0
+srcstring
+URL to the mask file
+modelstring
+Model to use for generation. Check all available models at https://json2video.com/docs/resources/generative-ai/
+model-settingsobject
+Model settings that will be passed to the model
+panstring
+Pans the element to the specified direction. If zoom property is not specified, the effect is a non-zooming pan
+allowed values:
+left
+top
+right
+bottom
+top-left
+top-right
+bottom-left
+bottom-right
+pan-cropboolean
+Enable or disable the crop effect when panning
+default:true
+pan-distancenumberfloat
+Is the distance of the panning effect. A higher value means a larger panning movement (higher speed)
+default:0.1
+minimum value:>=0.01
+maximum value:<=0.5
+positionstring
+Sets the element position in the scene. A value of 'custom' sets a custom position based on the provided 'x' and 'y' properties
+allowed values:
+top-left
+top-right
+bottom-right
+bottom-left
+center-center
+custom
+default:custom
+promptstring
+Prompt to generate the asset
+resizestring
+Sets the resize mode of the element. A value of 'cover' or 'fill' stretches the element to cover the entire movie canvas. A value of 'fit' or 'contain' stretches the element to fit the movie canvas. If set, the 'width' and 'height' properties are ignored
+allowed values:
+cover
+fill
+fit
+contain
+rotateobject
+anglenumberrequired
+Sets the angle of rotation
+default:0
+minimum value:>=-360
+maximum value:<=360
+speednumber
+Sets the time it takes to rotate the provided angle. A zero value means no movement
+default:0
+minimum value:>=0
+scaleobject
+This property is deprecated. Use 'width' and 'height' instead
+heightinteger
+Sets the height for scaling the element
+default:-1
+minimum value:>=-1
+widthinteger
+Sets the width for scaling the element
+default:-1
+minimum value:>=-1
+srcstringuri
+URL to the asset file. Images can be in JPG, PNG, GIF or any common image format.
+startnumberfloat
+Element's starting time in seconds relative to the container scene or the movie if the element is in the Movie's elements array.
+default:0
+typestring
+allowed values:
+image
+variablesobject
+Local variables of the element. Variable names can only contain letters, numbers and underscores
+default:{}
+example value:{ "myVariable": "myValue", "myOtherVariable": true, "myThirdVariable": 123 }
+widthinteger
+Sets the width of the element, scaling up or down if required. A value of '-1' means to keep the aspect ratio
+default:-1
+minimum value:>=-1
+xnumberinteger
+Sets the horizontal position of the element in the scene. The value 0 is on the left side
+default:0
+ynumberinteger
+Sets the vertical position of the element in the scene. The value 0 is on the top side
+default:0
+z-indexnumberinteger
+Element's z-index. Use this property to reorganize the layering of the elements like in HTML
+default:0
+minimum value:>=-99
+maximum value:<=99
+example value:3
+zoominteger
+Zooms the element with the specified level percentage. Positive values zoom in, negative values zoom out, zero does not zoom. Zoom can be combined with the pan property to set the focus point of the zooming
+minimum value:>=-10
+maximum value:<=10
+Text schema
+Creates a text element of a given style
+cachebooleanboolean
+Use the cached version of the element if its available
+default:true
+example value:false
+chroma-keyobject
+Allows to define a color (or a range of colors) that will be converted to transparent
+colorstringrequired
+Set the color for which alpha will be set to 0 (full transparency)
+example value:#00b140
+toleranceinteger
+Makes the selection more or less sensitive to changes in color. A value of 1 will select only the provided color. A value of 100 will select all colors, so the full canvas
+default:25
+minimum value:>=1
+maximum value:<=100
+commentstring
+Used for adding your comments
+conditionstring
+OPTIONAL. Condition to be met for the element to be rendered. If the value is false or empty string, the element is removed from the scene
+correctionobject
+Allows to adjust the contrast, brightness, saturation and gamma of the element
+blurnumber
+Apply gaussian blur. A value of 0 means no blur. A value of 10 means maximum blur.
+default:0
+minimum value:>=0
+maximum value:<=50
+brightnessnumber
+Adjust the brightness
+default:0
+minimum value:>=-1
+maximum value:<=1
+contrastnumber
+Adjust the contrast
+default:1
+minimum value:>=-1000
+maximum value:<=1000
+gammanumber
+Adjust the gamma
+default:1
+minimum value:>=0.1
+maximum value:<=10
+saturationnumber
+Adjust the saturation
+default:1
+minimum value:>=0
+maximum value:<=3
+cropobject
+Crops the element
+heightintegerrequired
+Sets the height of the croping
+widthintegerrequired
+Sets the width of the croping
+xinteger
+Sets the left point of croping
+default:0
+yinteger
+Sets the top point of croping
+default:0
+durationnumberfloat
+Element's duration in seconds. A value of -1 auto calculates the duration based on the asset/file intrinsic length. A value of -2 sets the element duration to the parent scene or element duration
+default:-2
+minimum value:>=-2
+example value:-1
+extra-timenumberfloat
+Element's time span added after the playback.
+default:0
+example value:0.5
+fade-innumberfloat
+Adds a fade in effect to the element. Value in seconds.
+minimum value:>=0
+fade-outnumberfloat
+Adds a fade out effect to the element. Value in seconds.
+minimum value:>=0
+flip-horizontalboolean
+Flips the element horizontally
+default:false
+flip-verticalboolean
+Flips the element vertically
+default:false
+heightinteger
+Sets the height of the element, scaling up or down if required. A value of '-1' means to keep the aspect ratio
+default:-1
+minimum value:>=-1
+idstring
+ID of the element
+default:@randomString
+maskobject
+A predefined mask name or a URL to a PNG or video file defining a mask for the element. For external mask files, black color is transparent, white is solid, and gray tones in between are partially transparent. Predefined masks names are: 'circle'.
+seeknumberfloat
+Seek to the specified time in seconds relative to the begining of the asset. Use negative values to seek backwards
+default:0
+srcstring
+URL to the mask file
+panstring
+Pans the element to the specified direction. If zoom property is not specified, the effect is a non-zooming pan
+allowed values:
+left
+top
+right
+bottom
+top-left
+top-right
+bottom-left
+bottom-right
+pan-cropboolean
+Enable or disable the crop effect when panning
+default:true
+pan-distancenumberfloat
+Is the distance of the panning effect. A higher value means a larger panning movement (higher speed)
+default:0.1
+minimum value:>=0.01
+maximum value:<=0.5
+positionstring
+Sets the element position in the scene. A value of 'custom' sets a custom position based on the provided 'x' and 'y' properties
+allowed values:
+top-left
+top-right
+bottom-right
+bottom-left
+center-center
+custom
+default:custom
+resizestring
+Sets the resize mode of the element. A value of 'cover' or 'fill' stretches the element to cover the entire movie canvas. A value of 'fit' or 'contain' stretches the element to fit the movie canvas. If set, the 'width' and 'height' properties are ignored
+allowed values:
+cover
+fill
+fit
+contain
+rotateobject
+anglenumberrequired
+Sets the angle of rotation
+default:0
+minimum value:>=-360
+maximum value:<=360
+speednumber
+Sets the time it takes to rotate the provided angle. A zero value means no movement
+default:0
+minimum value:>=0
+scaleobject
+This property is deprecated. Use 'width' and 'height' instead
+heightinteger
+Sets the height for scaling the element
+default:-1
+minimum value:>=-1
+widthinteger
+Sets the width for scaling the element
+default:-1
+minimum value:>=-1
+settingsobject
+Text formatting settings. In general, these are CSS properties such as font-size, colour or font-weight. See the styles to confirm which properties are available.
+default:{}
+example value:{ "font-size": "60px", "color": "#FF0000" }
+startnumberfloat
+Element's starting time in seconds relative to the container scene or the movie if the element is in the Movie's elements array.
+default:0
+stylestring
+Style of the text element. Check all available text style at https://json2video.com/resources/text/
+default:001
+example value:003
+textstringrequired
+Text to be printed. The text string does not accept HTML formatting.
+example value:Lorem ipsum dolor sit amet
+typestringrequired
+allowed values:
+text
+variablesobject
+Local variables of the element. Variable names can only contain letters, numbers and underscores
+default:{}
+example value:{ "myVariable": "myValue", "myOtherVariable": true, "myThirdVariable": 123 }
+widthinteger
+Sets the width of the element, scaling up or down if required. A value of '-1' means to keep the aspect ratio
+default:-1
+minimum value:>=-1
+xnumberinteger
+Sets the horizontal position of the element in the scene. The value 0 is on the left side
+default:0
+ynumberinteger
+Sets the vertical position of the element in the scene. The value 0 is on the top side
+default:0
+z-indexnumberinteger
+Element's z-index. Use this property to reorganize the layering of the elements like in HTML
+default:0
+minimum value:>=-99
+maximum value:<=99
+example value:3
+zoominteger
+Zooms the element with the specified level percentage. Positive values zoom in, negative values zoom out, zero does not zoom. Zoom can be combined with the pan property to set the focus point of the zooming
+minimum value:>=-10
+maximum value:<=10
+Component schema
+Creates an element based on the specified feature
+cachebooleanboolean
+Use the cached version of the element if its available
+default:true
+example value:false
+chroma-keyobject
+Allows to define a color (or a range of colors) that will be converted to transparent
+colorstringrequired
+Set the color for which alpha will be set to 0 (full transparency)
+example value:#00b140
+toleranceinteger
+Makes the selection more or less sensitive to changes in color. A value of 1 will select only the provided color. A value of 100 will select all colors, so the full canvas
+default:25
+minimum value:>=1
+maximum value:<=100
+commentstring
+Used for adding your comments
+componentstringrequired
+ID of the Component element. Check all available components in the library
+example value:basic/001
+conditionstring
+OPTIONAL. Condition to be met for the element to be rendered. If the value is false or empty string, the element is removed from the scene
+correctionobject
+Allows to adjust the contrast, brightness, saturation and gamma of the element
+blurnumber
+Apply gaussian blur. A value of 0 means no blur. A value of 10 means maximum blur.
+default:0
+minimum value:>=0
+maximum value:<=50
+brightnessnumber
+Adjust the brightness
+default:0
+minimum value:>=-1
+maximum value:<=1
+contrastnumber
+Adjust the contrast
+default:1
+minimum value:>=-1000
+maximum value:<=1000
+gammanumber
+Adjust the gamma
+default:1
+minimum value:>=0.1
+maximum value:<=10
+saturationnumber
+Adjust the saturation
+default:1
+minimum value:>=0
+maximum value:<=3
+cropobject
+Crops the element
+heightintegerrequired
+Sets the height of the croping
+widthintegerrequired
+Sets the width of the croping
+xinteger
+Sets the left point of croping
+default:0
+yinteger
+Sets the top point of croping
+default:0
+durationnumberfloat
+Element's duration in seconds. A value of -1 auto calculates the duration based on the asset/file intrinsic length. A value of -2 sets the element duration to the parent scene or element duration
+default:-2
+minimum value:>=-2
+example value:-1
+extra-timenumberfloat
+Element's time span added after the playback.
+default:0
+example value:0.5
+fade-innumberfloat
+Adds a fade in effect to the element. Value in seconds.
+minimum value:>=0
+fade-outnumberfloat
+Adds a fade out effect to the element. Value in seconds.
+minimum value:>=0
+flip-horizontalboolean
+Flips the element horizontally
+default:false
+flip-verticalboolean
+Flips the element vertically
+default:false
+heightinteger
+Sets the height of the element, scaling up or down if required. A value of '-1' means to keep the aspect ratio
+default:-1
+minimum value:>=-1
+idstring
+ID of the element
+default:@randomString
+maskobject
+A predefined mask name or a URL to a PNG or video file defining a mask for the element. For external mask files, black color is transparent, white is solid, and gray tones in between are partially transparent. Predefined masks names are: 'circle'.
+seeknumberfloat
+Seek to the specified time in seconds relative to the begining of the asset. Use negative values to seek backwards
+default:0
+srcstring
+URL to the mask file
+panstring
+Pans the element to the specified direction. If zoom property is not specified, the effect is a non-zooming pan
+allowed values:
+left
+top
+right
+bottom
+top-left
+top-right
+bottom-left
+bottom-right
+pan-cropboolean
+Enable or disable the crop effect when panning
+default:true
+pan-distancenumberfloat
+Is the distance of the panning effect. A higher value means a larger panning movement (higher speed)
+default:0.1
+minimum value:>=0.01
+maximum value:<=0.5
+positionstring
+Sets the element position in the scene. A value of 'custom' sets a custom position based on the provided 'x' and 'y' properties
+allowed values:
+top-left
+top-right
+bottom-right
+bottom-left
+center-center
+custom
+default:custom
+resizestring
+Sets the resize mode of the element. A value of 'cover' or 'fill' stretches the element to cover the entire movie canvas. A value of 'fit' or 'contain' stretches the element to fit the movie canvas. If set, the 'width' and 'height' properties are ignored
+allowed values:
+cover
+fill
+fit
+contain
+rotateobject
+anglenumberrequired
+Sets the angle of rotation
+default:0
+minimum value:>=-360
+maximum value:<=360
+speednumber
+Sets the time it takes to rotate the provided angle. A zero value means no movement
+default:0
+minimum value:>=0
+scaleobject
+This property is deprecated. Use 'width' and 'height' instead
+heightinteger
+Sets the height for scaling the element
+default:-1
+minimum value:>=-1
+widthinteger
+Sets the width for scaling the element
+default:-1
+minimum value:>=-1
+settingsobject
+Settings to be passed to the component
+startnumberfloat
+Element's starting time in seconds relative to the container scene or the movie if the element is in the Movie's elements array.
+default:0
+typestringrequired
+allowed values:
+component
+variablesobject
+Local variables of the element. Variable names can only contain letters, numbers and underscores
+default:{}
+example value:{ "myVariable": "myValue", "myOtherVariable": true, "myThirdVariable": 123 }
+widthinteger
+Sets the width of the element, scaling up or down if required. A value of '-1' means to keep the aspect ratio
+default:-1
+minimum value:>=-1
+xnumberinteger
+Sets the horizontal position of the element in the scene. The value 0 is on the left side
+default:0
+ynumberinteger
+Sets the vertical position of the element in the scene. The value 0 is on the top side
+default:0
+z-indexnumberinteger
+Element's z-index. Use this property to reorganize the layering of the elements like in HTML
+default:0
+minimum value:>=-99
+maximum value:<=99
+example value:3
+zoominteger
+Zooms the element with the specified level percentage. Positive values zoom in, negative values zoom out, zero does not zoom. Zoom can be combined with the pan property to set the focus point of the zooming
+minimum value:>=-10
+maximum value:<=10
+HTML schema
+Creates a video recording or a screenshot of the provided HTML snippet
+cachebooleanboolean
+Use the cached version of the element if its available
+default:true
+example value:false
+chroma-keyobject
+Allows to define a color (or a range of colors) that will be converted to transparent
+colorstringrequired
+Set the color for which alpha will be set to 0 (full transparency)
+example value:#00b140
+toleranceinteger
+Makes the selection more or less sensitive to changes in color. A value of 1 will select only the provided color. A value of 100 will select all colors, so the full canvas
+default:25
+minimum value:>=1
+maximum value:<=100
+commentstring
+Used for adding your comments
+conditionstring
+OPTIONAL. Condition to be met for the element to be rendered. If the value is false or empty string, the element is removed from the scene
+correctionobject
+Allows to adjust the contrast, brightness, saturation and gamma of the element
+blurnumber
+Apply gaussian blur. A value of 0 means no blur. A value of 10 means maximum blur.
+default:0
+minimum value:>=0
+maximum value:<=50
+brightnessnumber
+Adjust the brightness
+default:0
+minimum value:>=-1
+maximum value:<=1
+contrastnumber
+Adjust the contrast
+default:1
+minimum value:>=-1000
+maximum value:<=1000
+gammanumber
+Adjust the gamma
+default:1
+minimum value:>=0.1
+maximum value:<=10
+saturationnumber
+Adjust the saturation
+default:1
+minimum value:>=0
+maximum value:<=3
+cropobject
+Crops the element
+heightintegerrequired
+Sets the height of the croping
+widthintegerrequired
+Sets the width of the croping
+xinteger
+Sets the left point of croping
+default:0
+yinteger
+Sets the top point of croping
+default:0
+durationnumberfloat
+Element's duration in seconds. A value of -1 auto calculates the duration based on the asset/file intrinsic length. A value of -2 sets the element duration to the parent scene or element duration
+default:-2
+minimum value:>=-2
+example value:-1
+extra-timenumberfloat
+Element's time span added after the playback.
+default:0
+example value:0.5
+fade-innumberfloat
+Adds a fade in effect to the element. Value in seconds.
+minimum value:>=0
+fade-outnumberfloat
+Adds a fade out effect to the element. Value in seconds.
+minimum value:>=0
+flip-horizontalboolean
+Flips the element horizontally
+default:false
+flip-verticalboolean
+Flips the element vertically
+default:false
+heightinteger
+Sets the height of the element, scaling up or down if required. A value of '-1' means to keep the aspect ratio
+default:-1
+minimum value:>=-1
+htmlstring
+HTML snippet to render. Compatible with HTML5, CSS3 and Javascript
+example value:<h1>Hello world</h1>
+idstring
+ID of the element
+default:@randomString
+maskobject
+A predefined mask name or a URL to a PNG or video file defining a mask for the element. For external mask files, black color is transparent, white is solid, and gray tones in between are partially transparent. Predefined masks names are: 'circle'.
+seeknumberfloat
+Seek to the specified time in seconds relative to the begining of the asset. Use negative values to seek backwards
+default:0
+srcstring
+URL to the mask file
+panstring
+Pans the element to the specified direction. If zoom property is not specified, the effect is a non-zooming pan
+allowed values:
+left
+top
+right
+bottom
+top-left
+top-right
+bottom-left
+bottom-right
+pan-cropboolean
+Enable or disable the crop effect when panning
+default:true
+pan-distancenumberfloat
+Is the distance of the panning effect. A higher value means a larger panning movement (higher speed)
+default:0.1
+minimum value:>=0.01
+maximum value:<=0.5
+positionstring
+Sets the element position in the scene. A value of 'custom' sets a custom position based on the provided 'x' and 'y' properties
+allowed values:
+top-left
+top-right
+bottom-right
+bottom-left
+center-center
+custom
+default:custom
+resizestring
+Sets the resize mode of the element. A value of 'cover' or 'fill' stretches the element to cover the entire movie canvas. A value of 'fit' or 'contain' stretches the element to fit the movie canvas. If set, the 'width' and 'height' properties are ignored
+allowed values:
+cover
+fill
+fit
+contain
+rotateobject
+anglenumberrequired
+Sets the angle of rotation
+default:0
+minimum value:>=-360
+maximum value:<=360
+speednumber
+Sets the time it takes to rotate the provided angle. A zero value means no movement
+default:0
+minimum value:>=0
+scaleobject
+This property is deprecated. Use 'width' and 'height' instead
+heightinteger
+Sets the height for scaling the element
+default:-1
+minimum value:>=-1
+widthinteger
+Sets the width for scaling the element
+default:-1
+minimum value:>=-1
+srcstring
+URL to the web page
+startnumberfloat
+Element's starting time in seconds relative to the container scene or the movie if the element is in the Movie's elements array.
+default:0
+tailwindcssboolean
+Enables usage of TailwindCSS for the HTML snippet
+default:false
+example value:true
+typestringrequired
+allowed values:
+html
+variablesobject
+Local variables of the element. Variable names can only contain letters, numbers and underscores
+default:{}
+example value:{ "myVariable": "myValue", "myOtherVariable": true, "myThirdVariable": 123 }
+waitnumber
+Time in seconds to wait before taking the screenshot
+default:2
+minimum value:>=0
+maximum value:<=5
+widthinteger
+Sets the width of the element, scaling up or down if required. A value of '-1' means to keep the aspect ratio
+default:-1
+minimum value:>=-1
+xnumberinteger
+Sets the horizontal position of the element in the scene. The value 0 is on the left side
+default:0
+ynumberinteger
+Sets the vertical position of the element in the scene. The value 0 is on the top side
+default:0
+z-indexnumberinteger
+Element's z-index. Use this property to reorganize the layering of the elements like in HTML
+default:0
+minimum value:>=-99
+maximum value:<=99
+example value:3
+zoominteger
+Zooms the element with the specified level percentage. Positive values zoom in, negative values zoom out, zero does not zoom. Zoom can be combined with the pan property to set the focus point of the zooming
+minimum value:>=-10
+maximum value:<=10
+Audio schema
+cachebooleanboolean
+Use the cached version of the element if its available
+default:true
+example value:false
+commentstring
+Used for adding your comments
+conditionstring
+OPTIONAL. Condition to be met for the element to be rendered. If the value is false or empty string, the element is removed from the scene
+durationnumberfloat
+Element's duration in seconds. A value of -1 auto calculates the duration based on the asset/file intrinsic length. A value of -2 sets the element duration to the parent scene or element duration
+default:-1
+example value:7.3
+extra-timenumberfloat
+Element's time span added after the playback.
+default:0
+example value:0.5
+fade-innumberfloat
+Adds a fade in effect to the element. Value in seconds.
+minimum value:>=0
+fade-outnumberfloat
+Adds a fade out effect to the element. Value in seconds.
+minimum value:>=0
+idstring
+ID of the element
+default:@randomString
+loopinteger
+Sets the number of loops the video to play. Use -1 for an infinite loop. The default value of 1 plays the video just once.
+minimum value:>=-1
+example value:-1
+mutedboolean
+Mutes the audio
+default:false
+seeknumberfloat
+Seek to the specified time in seconds relative to the begining of the asset. Use negative values to seek backwards
+default:0
+srcstringuri
+URL to the asset file. Audios can be in MP3, WAV or any common audio format.
+startnumberfloat
+Element's starting time in seconds relative to the container scene or the movie if the element is in the Movie's elements array.
+default:0
+typestring
+allowed values:
+audio
+variablesobject
+Local variables of the element. Variable names can only contain letters, numbers and underscores
+default:{}
+example value:{ "myVariable": "myValue", "myOtherVariable": true, "myThirdVariable": 123 }
+volumenumber
+Volume gain of the audio. A value of 1 means no gain. Higher values increase the volume. Values lower than 1 decrease the volume
+default:1
+minimum value:>=0
+maximum value:<=10
+z-indexnumberinteger
+Element's z-index. Use this property to reorganize the layering of the elements like in HTML
+default:0
+minimum value:>=-99
+maximum value:<=99
+example value:3
+Voice schema
+Creates a voice audio element from the provided text
+cachebooleanboolean
+Use the cached version of the element if its available
+default:true
+example value:false
+commentstring
+Used for adding your comments
+conditionstring
+OPTIONAL. Condition to be met for the element to be rendered. If the value is false or empty string, the element is removed from the scene
+connectionstring
+Connection ID to use for generation. If specified, the API Key in the connection will be used. If not specified, the default API Key will be used and credits may be deducted
+durationnumberfloat
+Element's duration in seconds. A value of -1 auto calculates the duration based on the asset/file intrinsic length. A value of -2 sets the element duration to the parent scene or element duration
+default:-1
+example value:7.3
+extra-timenumberfloat
+Element's time span added after the playback.
+default:0
+example value:0.5
+fade-innumberfloat
+Adds a fade in effect to the element. Value in seconds.
+minimum value:>=0
+fade-outnumberfloat
+Adds a fade out effect to the element. Value in seconds.
+minimum value:>=0
+idstring
+ID of the element
+default:@randomString
+modelstring
+The model to use for generation. Check all available models at https://json2video.com/docs/resources/generative-ai/
+mutedboolean
+Mutes the audio
+default:false
+startnumberfloat
+Element's starting time in seconds relative to the container scene or the movie if the element is in the Movie's elements array.
+default:0
+textstringrequired
+The sentence or sentences to be converted to voice audio
+typestringrequired
+allowed values:
+voice
+variablesobject
+Local variables of the element. Variable names can only contain letters, numbers and underscores
+default:{}
+example value:{ "myVariable": "myValue", "myOtherVariable": true, "myThirdVariable": 123 }
+voicestring
+The voice name to be used. Check available voices.
+volumenumber
+Volume gain of the audio. A value of 1 means no gain. Higher values increase the volume. Values lower than 1 decrease the volume
+default:1
+minimum value:>=0
+maximum value:<=10
+z-indexnumberinteger
+Element's z-index. Use this property to reorganize the layering of the elements like in HTML
+default:0
+minimum value:>=-99
+maximum value:<=99
+example value:3
+Audiogram schema
+Visualizes the audio of the scene or movie as an audiogram
+amplitudenumberfloat
+Relative amplitude of the audiogram
+default:5
+minimum value:>=0
+maximum value:<=10
+cachebooleanboolean
+Use the cached version of the element if its available
+default:true
+example value:false
+chroma-keyobject
+Allows to define a color (or a range of colors) that will be converted to transparent
+colorstringrequired
+Set the color for which alpha will be set to 0 (full transparency)
+example value:#00b140
+toleranceinteger
+Makes the selection more or less sensitive to changes in color. A value of 1 will select only the provided color. A value of 100 will select all colors, so the full canvas
+default:25
+minimum value:>=1
+maximum value:<=100
+colorstring
+Color of the audiogram waves in hexadecimal format
+commentstring
+Used for adding your comments
+conditionstring
+OPTIONAL. Condition to be met for the element to be rendered. If the value is false or empty string, the element is removed from the scene
+correctionobject
+Allows to adjust the contrast, brightness, saturation and gamma of the element
+blurnumber
+Apply gaussian blur. A value of 0 means no blur. A value of 10 means maximum blur.
+default:0
+minimum value:>=0
+maximum value:<=50
+brightnessnumber
+Adjust the brightness
+default:0
+minimum value:>=-1
+maximum value:<=1
+contrastnumber
+Adjust the contrast
+default:1
+minimum value:>=-1000
+maximum value:<=1000
+gammanumber
+Adjust the gamma
+default:1
+minimum value:>=0.1
+maximum value:<=10
+saturationnumber
+Adjust the saturation
+default:1
+minimum value:>=0
+maximum value:<=3
+cropobject
+Crops the element
+heightintegerrequired
+Sets the height of the croping
+widthintegerrequired
+Sets the width of the croping
+xinteger
+Sets the left point of croping
+default:0
+yinteger
+Sets the top point of croping
+default:0
+durationnumberfloat
+Element's duration in seconds. A value of -1 auto calculates the duration based on the asset/file intrinsic length. A value of -2 sets the element duration to the parent scene or element duration
+default:-2
+minimum value:>=-2
+example value:-1
+extra-timenumberfloat
+Element's time span added after the playback.
+default:0
+example value:0.5
+fade-innumberfloat
+Adds a fade in effect to the element. Value in seconds.
+minimum value:>=0
+fade-outnumberfloat
+Adds a fade out effect to the element. Value in seconds.
+minimum value:>=0
+flip-horizontalboolean
+Flips the element horizontally
+default:false
+flip-verticalboolean
+Flips the element vertically
+default:false
+heightinteger
+Sets the height of the element, scaling up or down if required. A value of '-1' means to keep the aspect ratio
+default:-1
+minimum value:>=-1
+idstring
+ID of the element
+default:@randomString
+maskobject
+A predefined mask name or a URL to a PNG or video file defining a mask for the element. For external mask files, black color is transparent, white is solid, and gray tones in between are partially transparent. Predefined masks names are: 'circle'.
+seeknumberfloat
+Seek to the specified time in seconds relative to the begining of the asset. Use negative values to seek backwards
+default:0
+srcstring
+URL to the mask file
+opacitynumberfloat
+Opacity of the audiogram
+default:0.5
+minimum value:>=0
+maximum value:<=1
+panstring
+Pans the element to the specified direction. If zoom property is not specified, the effect is a non-zooming pan
+allowed values:
+left
+top
+right
+bottom
+top-left
+top-right
+bottom-left
+bottom-right
+pan-cropboolean
+Enable or disable the crop effect when panning
+default:true
+pan-distancenumberfloat
+Is the distance of the panning effect. A higher value means a larger panning movement (higher speed)
+default:0.1
+minimum value:>=0.01
+maximum value:<=0.5
+positionstring
+Sets the element position in the scene. A value of 'custom' sets a custom position based on the provided 'x' and 'y' properties
+allowed values:
+top-left
+top-right
+bottom-right
+bottom-left
+center-center
+custom
+default:custom
+resizestring
+Sets the resize mode of the element. A value of 'cover' or 'fill' stretches the element to cover the entire movie canvas. A value of 'fit' or 'contain' stretches the element to fit the movie canvas. If set, the 'width' and 'height' properties are ignored
+allowed values:
+cover
+fill
+fit
+contain
+rotateobject
+anglenumberrequired
+Sets the angle of rotation
+default:0
+minimum value:>=-360
+maximum value:<=360
+speednumber
+Sets the time it takes to rotate the provided angle. A zero value means no movement
+default:0
+minimum value:>=0
+scaleobject
+This property is deprecated. Use 'width' and 'height' instead
+heightinteger
+Sets the height for scaling the element
+default:-1
+minimum value:>=-1
+widthinteger
+Sets the width for scaling the element
+default:-1
+minimum value:>=-1
+startnumberfloat
+Element's starting time in seconds relative to the container scene or the movie if the element is in the Movie's elements array.
+default:0
+typestringrequired
+allowed values:
+audiogram
+variablesobject
+Local variables of the element. Variable names can only contain letters, numbers and underscores
+default:{}
+example value:{ "myVariable": "myValue", "myOtherVariable": true, "myThirdVariable": 123 }
+widthinteger
+Sets the width of the element, scaling up or down if required. A value of '-1' means to keep the aspect ratio
+default:-1
+minimum value:>=-1
+xnumberinteger
+Sets the horizontal position of the element in the scene. The value 0 is on the left side
+default:0
+ynumberinteger
+Sets the vertical position of the element in the scene. The value 0 is on the top side
+default:0
+z-indexnumberinteger
+Element's z-index. Use this property to reorganize the layering of the elements like in HTML
+default:0
+minimum value:>=-99
+maximum value:<=99
+example value:3
+zoominteger
+Zooms the element with the specified level percentage. Positive values zoom in, negative values zoom out, zero does not zoom. Zoom can be combined with the pan property to set the focus point of the zooming
+minimum value:>=-10
+maximum value:<=10
+Subtitles schema
+Adds subtitles to the scene or movie by transcribing the voice audio.
+captionsstring
+Captions to use as subtitles. The string can be a URL to a file with the captions or the actual captions content properly encoded. Supported formats are SRT, VTT or ASS. If this property is ommited, the subtitles will be generated automatically from the audio.
+commentstring
+Use it for your comments
+languagestring
+Language of the audio. Use auto to let the API detect the language automatically.
+allowed values:
+auto
+en
+bg
+ca
+cs
+da
+nl
+en-AU
+en-GB
+en-NZ
+en-IN
+en-US
+et
+fr
+fi
+nl-BE
+de
+de-CH
+el
+hi
+hi-Latn
+hu
+id
+it
+ja
+ko
+lv
+lt
+ms
+no
+pl
+pt
+pt-BR
+ro
+ru
+sk
+es
+es-419
+sv
+th
+tr
+uk
+vi
+zh
+zh-TW
+default:auto
+modelstring
+Model to use for transcription. If no model is provided, a default model is used.
+settingsobject
+Settings to customize the subtitles.
+default:{}
+all-capsboolean
+Makes the subtitles all caps
+default:false
+box-colorstring
+Color of the box behind the subtitles. Depending on the style, it can be the background color of the spoken word or the full line
+default:#000000
+font-familystring
+Font family of the subtitles. One of the font families below or a custom font family name if font-url is provided.
+allowed values:
+Arial
+Arial Bold
+Katibeh
+Lalezar
+Libre Baskerville
+Lobster
+Luckiest Guy
+Nanum Pen Script
+Nunito
+Pacifico
+Roboto
+Comic Neue
+Orelega One
+Oswald
+Oswald Bold
+Shrikhand
+Fredericka the Great
+Permanent Marker
+NotoSans Bold
+Simplified Chinese
+Traditional Chinese
+Japanese
+Korean
+Korean Bold
+Thai
+default:Arial
+font-sizeinteger
+Font size of the subtitles. Usual sizes are between 90 and 150. Defaults to 5% of the movie width.
+font-urlstring
+URL to the font file to use for the subtitles. The font file must be in TTF format. The font-family property must match the font family name in the font file.
+keywordsarray of this object:
+Keywords provides additional vocabulary to the transcription process. Use it to improve the accuracy of the transcription of non-standard words or phrases.
+line-colorstring
+Color of the rest of words in the line
+default:#FFFFFF
+max-words-per-lineinteger
+Maximum number of words per line
+default:4
+outline-colorstring
+Outline color of the subtitles
+default:#000000
+outline-widthinteger
+Width of the outline
+default:0
+positionstring
+Position of the subtitles
+allowed values:
+top-left
+top-center
+top-right
+center-left
+center-center
+center-right
+bottom-left
+bottom-center
+bottom-right
+mid-bottom-center
+mid-top-center
+custom
+default:bottom-center
+replaceobject
+Replaces words with the specified replacement. Useful to correct the transcription of non-standard words or phrases.
+shadow-colorstring
+Shadow color of the subtitles
+default:#000000
+shadow-offsetinteger
+Offset of the shadow
+default:0
+stylestring
+Style of the subtitles. Check the tutorial for more details.
+allowed values:
+classic
+classic-progressive
+classic-one-word
+boxed-line
+boxed-word
+default:classic
+word-colorstring
+Color of the spoken word
+default:#FFFF00
+xinteger
+X coordinate of the subtitles
+default:0
+yinteger
+Y coordinate of the subtitles
+default:0
+typestringrequired
+allowed values:
+subtitles
+
+
+
+
+
+
+
+
+
+Best Azure voices
+The voices below are some of the best and most popular voices available in the Microsoft Text to Speech service:
+
+English (United Kingdom)
+Sonia
+en-GB-SoniaNeural
+
++info
+Ollie
+en-GB-OllieMultilingualNeural
+
++info
+English (United States)
+Emma
+en-US-EmmaMultilingualNeural
+
++info
+Andrew
+en-US-AndrewNeural
+
++info
+Spanish (Spain)
+Arabella
+es-ES-ArabellaMultilingualNeural
+
++info
+Alvaro
+es-ES-AlvaroNeural
+
++info
+Spanish (Mexico)
+Larissa
+es-MX-LarissaNeural
+
++info
+Jorge
+es-MX-JorgeNeural
+
++info
+Portuguese (Brazil)
+Francisca
+pt-BR-FranciscaNeural
+
++info
+Antonio
+pt-BR-AntonioNeural
+
++info
+Korean (South Korea)
+InJoon
+ko-KR-InJoonNeural
+
++info
+SunHi
+ko-KR-SunHiNeural
+
++info

@@ -1,0 +1,85 @@
+Movie object#
+Type: object
+
+The movie object defines the overall structure and settings for the video to be rendered. It encompasses properties such as resolution, dimensions (width and height), quality, client-specific data, scenes, elements and export settings. Use this object to configure the visual and functional aspects of the final video output.
+
+Required Properties#
+scenes
+Properties#
+cache#
+If true, the system will attempt to use a previously rendered (cached) version of the movie, if available. This can significantly speed up processing time for subsequent requests with identical configurations. If false, a new render will always be performed. The default value is true.
+
+Type	boolean
+Required	No
+Default Value	true
+client-data#
+A set of custom key-value pairs that you can define to attach arbitrary data to the movie. This data will be included in the response of GET requests for the movie and also included in any webhook payloads triggered by the movie's processing. This allows you to pass information relevant to your application or workflow along with the video processing status. The values can be strings, numbers, booleans, or any valid JSON type.
+
+Type	object
+Required	No
+Default Value	{}
+comment#
+A field for adding descriptive notes or internal memos related to the movie. This comment is for your reference and does not affect the rendering process. It can be used to track project details, client information, or any other relevant information.
+
+Type	string
+Required	No
+elements#
+An array of element objects containing the elements to be rendered in the movie. Elements can include videos, images, text, HTML snippets, components, templates, audio, AI generated voiceovers, audiograms, and subtitles. The order of the elements within this array determines their layering in the video, with elements appearing later in the array rendered on top of earlier elements.
+
+Type	array
+Required	No
+Array Items#
+exports#
+An array of export configurations for the movie. Each configuration defines how the movie will be exported, allowing you to specify different formats, resolutions, or other export-specific settings. See the documentation for available export options and their configurations.
+
+Type	array
+Required	No
+Array Items#
+height#
+Defines the height of the movie in pixels. This property is applicable and required when the resolution is set to custom. The value must be an integer between 50 and 3840. A default value of 360 is applied if a custom resolution is selected and no height is specified.
+
+Type	integer
+Required	No
+Default Value	360
+Minimum Value	50
+Maximum Value	3840
+id#
+A unique identifier for the movie. The system can automatically generate a random string if one is not provided.
+
+Type	string
+Required	No
+Default Value	"@randomString"
+quality#
+Defines the quality level of the final rendered movie, impacting both visual fidelity and rendering speed. Lower quality settings will result in faster rendering times but may produce a less visually appealing output. The available options are low, medium, and high, with high being the default for optimal visual quality.
+
+Type	string
+Required	No
+Default Value	"high"
+Enum Values	low, medium, high
+resolution#
+Defines the resolution (size) of the video. Choose a preset value to quickly set common video dimensions, or select custom to specify the exact width and height in pixels. Available presets include standard definition (sd), high definition (hd), full high definition (full-hd), a square aspect ratio (squared), and resolutions optimized for Instagram Stories (instagram-story), Instagram Feed posts (instagram-feed), Twitter landscape (twitter-landscape), and Twitter portrait (twitter-portrait). When using custom, the width and height properties become required.
+
+Type	string
+Required	No
+Default Value	"custom"
+Enum Values	sd, hd, full-hd, squared, instagram-story, instagram-feed, twitter-landscape, twitter-portrait, custom
+scenes#
+An array of scene objects that define the sequence of content displayed in the movie. Each scene represents a distinct segment of the video and can contain various elements such as videos, images, text, and more. The order of the scenes in the array determines the playback order in the final video. This property is required but can be an empty array.
+
+Type	array
+Required	Yes
+Array Items#
+variables#
+Defines a set of variables that can be used to dynamically populate templates or other elements within the movie. The value of each variable can be a string, number, boolean, or any other valid JSON type. Variable names are restricted to letters, numbers, and underscores. This allows you to personalize your video content by injecting dynamic values during the rendering process.
+
+Type	object
+Required	No
+Default Value	{}
+width#
+Defines the width of the movie in pixels. This property is only applicable and required when the resolution is set to custom. The value must be an integer between 50 and 3840. A default value of 640 is applied if a custom resolution is selected and no width is specified.
+
+Type	integer
+Required	No
+Default Value	640
+Minimum Value	50
+Maximum Value	3840
