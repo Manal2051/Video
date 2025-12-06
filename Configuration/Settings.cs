@@ -20,7 +20,7 @@ public class Json2VideoSettings
     /// <summary>
     /// Timeout in seconds for API requests
     /// </summary>
-    public int TimeoutSeconds { get; set; } = 300;
+    public int TimeoutSeconds { get; set; } = 1000;
 }
 
 /// <summary>

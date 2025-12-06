@@ -31,6 +31,16 @@ public class VideoGenerationRequest
     public double PauseBetweenWords { get; set; } = 1.0;
 
     /// <summary>
+    /// Optional: Desired video duration in minutes. If set, overrides WordCount.
+    /// </summary>
+    public double? DurationMinutes { get; set; }
+
+    /// <summary>
+    /// Whether to repeat the secondary language word (total 3 times: 1 primary, 2 secondary).
+    /// </summary>
+    public bool UseSecondaryRepeat { get; set; } = false;
+
+    /// <summary>
     /// Optional: Video resolution (default: "full-hd")
     /// </summary>
     public string Resolution { get; set; } = "full-hd";

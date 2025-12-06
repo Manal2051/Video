@@ -50,6 +50,26 @@ public class VideoGeneratorService : IVideoGeneratorService
     {
         try
         {
+            // Calculate WordCount from DurationMinutes if provided
+            if (request.DurationMinutes.HasValue && request.DurationMinutes.Value > 0)
+            {
+                double totalSeconds = request.DurationMinutes.Value * 60;
+                // Assuming 1 second per word + pause
+                double secondsPerUnit = request.PauseBetweenWords + 1.0;
+                int itemsPerPair = request.UseSecondaryRepeat ? 3 : 2;
+
+                double calculatedPairs = totalSeconds / (itemsPerPair * secondsPerUnit);
+                request.WordCount = (int)Math.Floor(calculatedPairs);
+
+                // Clamp to valid range to pass validation
+                if (request.WordCount < 1) request.WordCount = 1;
+                if (request.WordCount > 100) request.WordCount = 100;
+
+                _logger.LogInformation(
+                    "Calculated WordCount: {WordCount} from Duration: {Duration} mins (Repeat: {Repeat})",
+                    request.WordCount, request.DurationMinutes, request.UseSecondaryRepeat);
+            }
+
             _logger.LogInformation(
                 "Starting video generation for topic '{Topic}' with {Count} words",
                 request.Topic, request.WordCount);
@@ -153,29 +173,39 @@ public class VideoGeneratorService : IVideoGeneratorService
             "Using voices: Source={SourceVoice}, Target={TargetVoice}",
             sourceVoice, targetVoice);
 
+        // Calculate timing
+        // User logic: Each word is about 1 second + pause
+        double wordDuration = 1.0;
+        double pauseDuration = request.PauseBetweenWords;
+        double itemDuration = wordDuration + pauseDuration;
+
+        // Items per pair: Source + Target (+ Target if repeat)
+        int itemsPerPair = request.UseSecondaryRepeat ? 3 : 2;
+        double pairDuration = itemsPerPair * itemDuration;
+
         // Build a single scene with all word pairs sequenced
-        // Each word pair takes 5 seconds
-        double secondsPerWord = 5.0;
         var scene = new Scene
         {
             Comment = $"All words: {string.Join(", ", wordPairs.Select(w => w.SourceWord))}",
             BackgroundColor = request.BackgroundColor,
-            Duration = wordPairs.Count * secondsPerWord, // Total duration
+            Duration = wordPairs.Count * pairDuration, // Total duration
             Elements = new List<Element>()
         };
 
         for (int i = 0; i < wordPairs.Count; i++)
         {
             var wordPair = wordPairs[i];
-            double startTime = i * secondsPerWord;
-            double targetVoiceStart = startTime + 2.5; // When target voice plays
+            double startTime = i * pairDuration;
 
-            // Source text - visible only until target word appears (first 2.5 seconds)
+            // 1. Source Word
+            double sourceStart = startTime;
+
+            // Source text - visible during source audio
             scene.Elements.Add(new TextElement
             {
                 Text = wordPair.SourceWord,
-                Start = startTime,
-                Duration = 2.5, // Disappears when target voice/text starts
+                Start = sourceStart,
+                Duration = itemDuration,
                 Settings = new Dictionary<string, object>
                 {
                     { "font-size", "80px" },
@@ -184,12 +214,27 @@ public class VideoGeneratorService : IVideoGeneratorService
                 }
             });
 
-            // Target text - appears synced with target voice (at 2.5s into word segment)
+            // Source voice
+            scene.Elements.Add(new VoiceElement
+            {
+                Text = wordPair.SourceWord,
+                Voice = sourceVoice,
+                Model = "azure",
+                Start = sourceStart
+            });
+
+            // 2. Target Word (First occurrence)
+            double targetStart = sourceStart + itemDuration;
+
+            // Target text - visible from start of target audio until end of pair
+            // If repeating, it stays visible during the repeat too
+            double targetTextDuration = pairDuration - itemDuration; // Remaining time in pair
+
             scene.Elements.Add(new TextElement
             {
                 Text = wordPair.TargetWord,
-                Start = targetVoiceStart, // Synced with target voice
-                Duration = secondsPerWord - 2.5, // Visible for remaining time
+                Start = targetStart,
+                Duration = targetTextDuration,
                 Settings = new Dictionary<string, object>
                 {
                     { "font-size", "80px" },
@@ -198,23 +243,29 @@ public class VideoGeneratorService : IVideoGeneratorService
                 }
             });
 
-            // Source voice - plays at start of word segment
-            scene.Elements.Add(new VoiceElement
-            {
-                Text = wordPair.SourceWord,
-                Voice = sourceVoice,
-                Model = "azure",
-                Start = startTime
-            });
-
-            // Target voice - plays at 2.5 seconds (synced with target text)
+            // Target voice 1
             scene.Elements.Add(new VoiceElement
             {
                 Text = wordPair.TargetWord,
                 Voice = targetVoice,
                 Model = "azure",
-                Start = targetVoiceStart
+                Start = targetStart
             });
+
+            // 3. Target Word (Second occurrence - Optional)
+            if (request.UseSecondaryRepeat)
+            {
+                double repeatStart = targetStart + itemDuration;
+
+                // Target voice 2
+                scene.Elements.Add(new VoiceElement
+                {
+                    Text = wordPair.TargetWord,
+                    Voice = targetVoice,
+                    Model = "azure",
+                    Start = repeatStart
+                });
+            }
         }
 
         movieRequest.Scenes.Add(scene);
